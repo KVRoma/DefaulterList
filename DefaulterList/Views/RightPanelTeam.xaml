@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="DefaulterList.Views.RightPanelTeam"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DefaulterList.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>            
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>            
+        </Grid.RowDefinitions>
+        
+
+        <Label Grid.Row="0" 
+               FontWeight="Bold"
+               Content="Team list" 
+               HorizontalAlignment="Center"/>
+
+        <Border Grid.Row="1"
+                        Style="{StaticResource BorderRadius}">
+            <TextBox HorizontalAlignment="Stretch"                                 
+                     FontWeight="Bold"
+                     Foreground="Blue"
+                     Text="{Binding TeamFilter, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding AddTeam}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                Key="Return"/>
+                </TextBox.InputBindings>
+            </TextBox>
+        </Border>
+
+        <Border Grid.Row="2"
+                Style="{StaticResource BorderRadius}">
+            
+            <DataGrid AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      ItemsSource="{Binding Teams, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectedItem="{Binding TeamSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <DataGrid.InputBindings>
+                    <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddTask}"/>
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Team" 
+                                        Foreground="Blue" 
+                                        FontSize="12"
+                                        FontWeight="Bold"
+                                        Width="auto" 
+                                        Binding="{Binding Path=NameTeam}"/>
+                    <DataGridTextColumn Header="Name" 
+                                        Width="*" 
+                                        FontStyle="Italic"
+                                        Binding="{Binding Path=Descriptions}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        
+    </Grid>
+</UserControl>

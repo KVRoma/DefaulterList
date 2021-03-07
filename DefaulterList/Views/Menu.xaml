@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="DefaulterList.Views.Menu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DefaulterList.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="600">
+    <Grid>
+        <Menu>
+            <Menu.InputBindings>
+                <MouseBinding Gesture="RightDoubleClick" Command="{Binding VisibleClear}"/>
+            </Menu.InputBindings>
+            <MenuItem Header="File">
+                <MenuItem Header="Load db" Command="{Binding GetTotalList}"/>
+                <MenuItem Header="Load Defaulter list" Command="{Binding GetDefaulter}"/>
+                <Separator/>
+                <MenuItem Header="Exit"/>
+            </MenuItem>
+            <Separator Margin="10,0,0,0"/>
+            <MenuItem Header="Clear" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">
+                <MenuItem Header="Team" Command="{Binding ClearTeam}"/>
+                <MenuItem Header="Worker" Command="{Binding ClearWorker}"/>
+            </MenuItem>
+        </Menu>
+    </Grid>
+</UserControl>
