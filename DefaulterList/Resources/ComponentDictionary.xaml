@@ -63,7 +63,7 @@
     <Style TargetType="Label" x:Key="ProgressBar">
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontSize" Value="24"/>
-        <Setter Property="Foreground" Value="Red"/>
+        <Setter Property="Foreground" Value="Blue"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
     <!--**********************************************************-->

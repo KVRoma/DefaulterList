@@ -12,7 +12,7 @@
                    Style="{StaticResource ProgressBar}"/>
             <ProgressBar  Height="5"
                           Width="900"
-                          IsIndeterminate="True" Foreground="Red" />
+                          IsIndeterminate="True" Foreground="Blue" />
         </StackPanel>            
     </Grid>
 </UserControl>

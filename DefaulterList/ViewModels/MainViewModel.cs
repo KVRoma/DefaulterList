@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -14,6 +13,7 @@ namespace DefaulterList.ViewModels
     public class MainViewModel : ViewModel
     {
         ContextDefaulter db;
+        private DateTime dateLoad;
         private double opacityProgressBar;
         private Dictionary<string, Visibility> isVisibility;
         private Team teamSelect;
@@ -22,8 +22,7 @@ namespace DefaulterList.ViewModels
         private Worker workerSelect;
         private IEnumerable<Worker> workers;
         private string workerFilter;
-        private IEnumerable<TotalList> totalLists;
-        //private Defaulter defaulterSelect;
+        private IEnumerable<TotalList> totalLists;        
         private IEnumerable<Defaulter> defaulters;
         private DefaulterGrid defaulterGridSelect;
         private List<DefaulterGrid> defaulterGrids;
@@ -110,25 +109,7 @@ namespace DefaulterList.ViewModels
                 totalLists = value;
                 OnPropertyChanged(nameof(TotalLists));
             }
-        }
-        //public Defaulter DefaulterSelect
-        //{
-        //    get { return defaulterSelect; }
-        //    set
-        //    {
-        //        defaulterSelect = value;
-        //        OnPropertyChanged(nameof(DefaulterSelect));
-        //    }
-        //}
-        //public IEnumerable<Defaulter> Defaulters
-        //{
-        //    get { return defaulters; }
-        //    set
-        //    {
-        //        defaulters = value;
-        //        OnPropertyChanged(nameof(Defaulters));
-        //    }
-        //}
+        }        
         public DefaulterGrid DefaulterGridSelect
         {
             get { return defaulterGridSelect; }
@@ -173,15 +154,18 @@ namespace DefaulterList.ViewModels
         }));
         public Command GetDefaulter => _getDefaulter ?? (_getDefaulter = new Command(async obj=> 
         {
+            DateTime date = new DateTime();
             StartProgressBar();
             await Task.Run(()=> 
             { 
                 LoadService service = new LoadService(TotalLists);          
                 service.LoadDefaulterCSV();
+                date = service.Defaulters.FirstOrDefault().Date;
+                SaveDateLoading(date);
                 db.Defaulters.AddRange(service.Defaulters);               
-                db.SaveChanges();            
-            });
-            LoadDefaulters();
+                db.SaveChanges();
+                LoadDefaulters();
+            });            
             StopProgressBar();
         }));
         public Command AddTeam => _addTeam ?? (_addTeam = new Command(obj=> 
@@ -287,24 +271,17 @@ namespace DefaulterList.ViewModels
             TotalLists = db.TotalLists.Local.ToBindingList();
         }
         private void LoadDefaulters()
-        {
-            defaulters = db.Defaulters.Include(x => x.TotalList);
-            DefaulterGrids = new List<DefaulterGrid>();
+        {            
+            dateLoad = db.Dictionaries.FirstOrDefault(x=>x.NameKey == "DateLoad")?.ValueKeyDate ?? DateTime.MinValue;
+            defaulters = db.Defaulters.Include(x => x.TotalList).Where(x=>x.Date == dateLoad);
+            DefaulterGrids = null;            
+            List<DefaulterGrid> tempGrid = new List<DefaulterGrid>();
             foreach (var item in defaulters)
-            {
-                var grid = new DefaulterGrid()
-                {
-                    Number = item.TotalList.Number,
-                    Address = item.TotalList.Address,
-                    Name = item.TotalList.Name,
-                    TotalListId = item.TotalListId,
-                    Date = item.Date,
-                    DebtTOV = item.DebtTOV,
-                    DebtRZP = item.DebtRZP,
-                    DefaulterId = item.Id
-                };
-                DefaulterGrids.Add(grid);
+            {                
+                tempGrid.Add(item);                
             }
+            DefaulterGrids = new List<DefaulterGrid>();
+            DefaulterGrids = tempGrid;
         }
         private void StartProgressBar()
         {
@@ -334,6 +311,27 @@ namespace DefaulterList.ViewModels
                 { "ProgressBar", Visibility.Collapsed}
             };
             OpacityProgressBar = 1;
+        }
+        private void SaveDateLoading(DateTime date)
+        {
+            var temp = db.Dictionaries.FirstOrDefault(x => x.NameKey == "DateLoad");
+            if (temp != null)
+            {
+                temp.ValueKeyDate = date;
+                db.Entry(temp).State = EntityState.Modified;
+            }
+            else
+            {
+                Dictionary dic = new Dictionary()
+                {
+                    NameKey = "DateLoad",
+                    ValueKeyDate = date,
+                    ValueKeyText = ""
+                };
+                db.Dictionaries.Add(dic);
+            }
+            db.SaveChanges();            
+
         }
     }
 }

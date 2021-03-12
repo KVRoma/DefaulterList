@@ -18,6 +18,8 @@ namespace DefaulterList.Models
         public DbSet<Team> Teams { get; set; }
         public DbSet<Result> Results { get; set; }
 
+        public DbSet<Dictionary> Dictionaries { get; set; }
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
