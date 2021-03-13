@@ -13,7 +13,7 @@ namespace DefaulterList.Models
         public decimal DebtTOV { get; set; }
         public decimal DebtRZP { get; set; }
 
-        public DateTime DateResult { get; set; }
+        public DateTime? DateResult { get; set; }
         public string DescriptionResult { get; set; }
         public decimal PaymentTOVResult { get; set; }
         public decimal PaymentRZPResult { get; set; }

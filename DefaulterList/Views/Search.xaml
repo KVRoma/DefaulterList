@@ -21,7 +21,9 @@
 
                 <Label Grid.Column="0"
                        Margin="5"
-                       Content="Search: "/>
+                       FontWeight="Bold"
+                       FontStyle="Italic"
+                       Content="Пошук: "/>
 
                 <TextBox Grid.Column="1"
                          Margin="5">
@@ -47,7 +49,9 @@
 
                 <Label Grid.Column="4"
                        Margin="10,5,10,5"
-                       Content="and"/>
+                       FontWeight="Bold"
+                       FontStyle="Italic"
+                       Content="і"/>
 
                 <ComboBox Grid.Column="5"
                           Margin="5"

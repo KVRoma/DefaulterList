@@ -72,6 +72,14 @@
             <local:RightPanelTeam/>
         </Border>
 
+        <Border Grid.Row="1" 
+                Grid.Column="2"
+                Style="{StaticResource BorderRadius}"
+                Visibility="{Binding IsVisibility[RightPanelGrid]}"
+                Opacity="{Binding OpacityProgressBar}">
+            <local:RightPanelForGrid/>
+        </Border>
+
         <!--Footer menu-->
         <Border Grid.Row="2" 
                 Grid.Column="0" 

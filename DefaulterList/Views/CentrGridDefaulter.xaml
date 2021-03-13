@@ -22,24 +22,38 @@
                   IsReadOnly="True" 
                   ItemsSource="{Binding Defaulters, UpdateSourceTrigger=PropertyChanged}" 
                   UI:MultiSelect.SelectedItems="{Binding DefaultersSelect, UpdateSourceTrigger=PropertyChanged}">
-            <DataGrid.RowStyle>
+            <DataGrid.RowStyle>                
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="{Binding Path=Color}"/>
+                    <Setter Property="FontSize" Value="10"/>
                 </Style>
             </DataGrid.RowStyle>            
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Number" Width="auto"  Binding="{Binding Path=TotalList.Number}"/>
-                <DataGridTextColumn Header="Address" Width="*" Binding="{Binding Path=TotalList.Address}"/>
-                <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=TotalList.Name}"/>
-                <DataGridTextColumn Header="Date" Width="0.3*"  Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                <DataGridTextColumn Header="TOV" Width="0.4*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
-                <DataGridTextColumn Header="RZP" Width="0.4*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="О/р" Width="auto"  Binding="{Binding Path=TotalList.Number}"/>
+                <DataGridTextColumn Header="Адреса" Width="*" Binding="{Binding Path=TotalList.Address}"/>
+                <DataGridTextColumn Header="П.І.Б." Width="auto" Binding="{Binding Path=TotalList.Name}"/>
+                <DataGridTextColumn Header="Дата" Width="0.3*"  Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                <DataGridTextColumn Header="ТОВ" Width="0.4*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="РЗП" Width="0.4*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
+                <DataGridTemplateColumn MinWidth="1" Width="2" MaxWidth="2" CellStyle="{StaticResource DataGridColumnSeparator}"/>
+                <DataGridTextColumn Header="Виконавець" Width="auto" Binding="{Binding Path=NameTeam}"/>
+                <DataGridTextColumn Header="Дата" Width="0.3*"  Binding="{Binding Path=DateResult, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                <DataGridTextColumn Header="Оп ТОВ" Width="0.4*" Binding="{Binding Path=PaymentTOVResult}"/>
+                <DataGridTextColumn Header="Оп РЗП" Width="0.4*" Binding="{Binding Path=PaymentRZPResult}"/>
+                <DataGridCheckBoxColumn Header="Відк." Width="auto" Binding="{Binding Path=IsDisabled}"/>                
             </DataGrid.Columns>
         </DataGrid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Label Content="Total Count: "/>
-            <Label Content="{Binding CountItem}"/>            
+            <Label FontWeight="Bold" 
+                   FontStyle="Italic" 
+                   FontSize="10"
+                   Content="Всього відібрано: "/>
+            <Label FontWeight="Bold" 
+                   FontStyle="Italic" 
+                   FontSize="10"
+                   Foreground="Red"
+                   Content="{Binding CountItem}"/>            
         </StackPanel>
     </Grid>
 </UserControl>

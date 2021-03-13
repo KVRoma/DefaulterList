@@ -112,6 +112,9 @@
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\RightPanelForGrid.xaml.cs">
+      <DependentUpon>RightPanelForGrid.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\RightPanelTeam.xaml.cs">
       <DependentUpon>RightPanelTeam.xaml</DependentUpon>
     </Compile>
@@ -150,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RightPanelForGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
