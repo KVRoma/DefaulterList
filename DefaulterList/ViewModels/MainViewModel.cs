@@ -22,11 +22,16 @@ namespace DefaulterList.ViewModels
         private Worker workerSelect;
         private IEnumerable<Worker> workers;
         private string workerFilter;
-        private IEnumerable<TotalList> totalLists;        
+        private IEnumerable<TotalList> totalLists;
+        private IList<Defaulter> defaultersSelect;
         private IEnumerable<Defaulter> defaulters;
-        private DefaulterGrid defaulterGridSelect;
-        private List<DefaulterGrid> defaulterGrids;
-        
+        private int countItem;        
+        private decimal firstField;
+        private decimal secondaryField;
+        private string firstComboSelect;        
+        private string secondaryComboSelect;
+        private List<string> textComboBox;
+
 
         public string TitleView { get; } = "Defaulter List - 2021";
         public double OpacityProgressBar
@@ -109,23 +114,85 @@ namespace DefaulterList.ViewModels
                 totalLists = value;
                 OnPropertyChanged(nameof(TotalLists));
             }
-        }        
-        public DefaulterGrid DefaulterGridSelect
+        }
+        public IList<Defaulter> DefaultersSelect
         {
-            get { return defaulterGridSelect; }
+            get { return defaultersSelect; }
             set
             {
-                defaulterGridSelect = value;
-                OnPropertyChanged(nameof(DefaulterGridSelect));
+                defaultersSelect = value;
+                OnPropertyChanged(nameof(DefaultersSelect));                 
             }
         }
-        public List<DefaulterGrid> DefaulterGrids
+        public IEnumerable<Defaulter> Defaulters
         {
-            get { return defaulterGrids; }
+            get { return defaulters; }
             set
             {
-                defaulterGrids = value;
-                OnPropertyChanged(nameof(DefaulterGrids));
+                defaulters = value;
+                OnPropertyChanged(nameof(Defaulters));
+            }
+        }
+        public int CountItem
+        {
+            get { return countItem; }
+            set
+            {
+                countItem = value;
+                OnPropertyChanged(nameof(CountItem));
+            }
+        }        
+        public decimal FirstField
+        {
+            get { return firstField; }
+            set
+            {
+                firstField = value;
+                OnPropertyChanged(nameof(FirstField));
+            }
+        }
+        public decimal SecondaryField
+        {
+            get { return secondaryField; }
+            set
+            {
+                secondaryField = value;
+                OnPropertyChanged(nameof(SecondaryField));
+            }
+        }
+        public string FirstComboSelect
+        {
+            get { return firstComboSelect; }
+            set
+            {
+                firstComboSelect = value;
+                OnPropertyChanged(nameof(FirstComboSelect));
+                if (FirstComboSelect == "")
+                {
+                    FirstField = 0m;
+                }
+            }
+        }        
+        public string SecondaryComboSelect
+        {
+            get { return secondaryComboSelect; }
+            set
+            {
+                secondaryComboSelect = value;
+                OnPropertyChanged(nameof(SecondaryComboSelect));
+                if (SecondaryComboSelect == "")
+                {
+                    SecondaryField = 0m;
+                }
+            }
+        }
+        public List<string> TextComboBox
+        {
+            get { return textComboBox; }
+            set
+            {
+                textComboBox = value;
+                OnPropertyChanged(nameof(TextComboBox));
             }
         }
 
@@ -137,6 +204,7 @@ namespace DefaulterList.ViewModels
         private Command _visibleClear;
         private Command _clearTeam;
         private Command _clearWorker;
+        private Command _search;
 
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
@@ -236,20 +304,42 @@ namespace DefaulterList.ViewModels
             db.SaveChanges();
             LoadWorker();
         }));
+        public Command Search => _search ?? (_search = new Command(obj=> 
+        {
+            string item = obj.ToString();            
+            LoadDefaulters();
+            if (!string.IsNullOrWhiteSpace(item))
+            {
+                Defaulters = Defaulters.Where(x => x.TotalList.City.ToUpper().Contains(item.ToUpper()));
+                CountItem = Defaulters?.Count() ?? 0;                
+            }
+            if (!string.IsNullOrWhiteSpace(FirstComboSelect))
+            {
+                Defaulters = Defaulters.Where(x => Operator(FirstComboSelect, x.DebtTOV, FirstField));
+                CountItem = Defaulters?.Count() ?? 0;
+            }
+            if (!string.IsNullOrWhiteSpace(SecondaryComboSelect))
+            {
+                Defaulters = Defaulters.Where(x => Operator(SecondaryComboSelect, x.DebtTOV, SecondaryField));
+                CountItem = Defaulters?.Count() ?? 0;
+            }
+        }));
 
         
 
         public MainViewModel()
         {
             InitializeVisibility();
-            InitializedDB();             
+            InitializedDB();
+            LoadComboBox();
+            DefaultersSelect = new List<Defaulter>();
         }
 
         private void InitializedDB()
         {            
             db = new ContextDefaulter();
-                        
-            db.Results.Load();
+            db.Defaulters.Include(x => x.TotalList).Load();         
+            db.Results.Include(x=>x.TotalList).Include(x=>x.Team).Load();
             LoadWorker();
             LoadTeam();
             LoadTotalList();
@@ -273,15 +363,18 @@ namespace DefaulterList.ViewModels
         private void LoadDefaulters()
         {            
             dateLoad = db.Dictionaries.FirstOrDefault(x=>x.NameKey == "DateLoad")?.ValueKeyDate ?? DateTime.MinValue;
-            defaulters = db.Defaulters.Include(x => x.TotalList).Where(x=>x.Date == dateLoad);
-            DefaulterGrids = null;            
-            List<DefaulterGrid> tempGrid = new List<DefaulterGrid>();
-            foreach (var item in defaulters)
-            {                
-                tempGrid.Add(item);                
-            }
-            DefaulterGrids = new List<DefaulterGrid>();
-            DefaulterGrids = tempGrid;
+            Defaulters = db.Defaulters.Local.ToBindingList().Where(x=>x.Date == dateLoad);
+            CountItem = Defaulters?.Count() ?? 0;
+        }
+        private void LoadComboBox()
+        {
+            TextComboBox = new List<string>() 
+            {
+                "",
+                ">",
+                "<",
+                "=="
+            };           
         }
         private void StartProgressBar()
         {
@@ -332,6 +425,16 @@ namespace DefaulterList.ViewModels
             }
             db.SaveChanges();            
 
+        }
+        public  bool Operator(string logic, decimal x, decimal y)
+        {
+            switch (logic)
+            {
+                case ">": return x > y;
+                case "<": return x < y;
+                case "==": return x == y;
+                default: throw new Exception("invalid logic");
+            }
         }
     }
 }

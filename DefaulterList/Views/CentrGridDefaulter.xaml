@@ -4,13 +4,24 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DefaulterList.Views"
+             xmlns:UI="clr-namespace:DefaulterList.Commands"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <DataGrid AutoGenerateColumns="False" 
-                      IsReadOnly="True" 
-                      ItemsSource="{Binding DefaulterGrids, UpdateSourceTrigger=PropertyChanged}" 
-                      SelectedItem="{Binding DefaulterGridSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <local:Search Grid.Row="0"/>
+
+        <DataGrid Grid.Row="1" 
+                  AutoGenerateColumns="False" 
+                  SelectionMode="Extended"
+                  IsReadOnly="True" 
+                  ItemsSource="{Binding Defaulters, UpdateSourceTrigger=PropertyChanged}" 
+                  UI:MultiSelect.SelectedItems="{Binding DefaultersSelect, UpdateSourceTrigger=PropertyChanged}">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="{Binding Path=Color}"/>
@@ -20,13 +31,18 @@
                 <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddName}"/>
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Number" Width="auto"  Binding="{Binding Path=Number}"/>
-                <DataGridTextColumn Header="Address" Width="*" Binding="{Binding Path=Address}"/>
-                <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Date" Width="0.1*"  Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                <DataGridTextColumn Header="TOV" Width="0.1*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
-                <DataGridTextColumn Header="RZP" Width="0.1*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="Number" Width="auto"  Binding="{Binding Path=TotalList.Number}"/>
+                <DataGridTextColumn Header="Address" Width="*" Binding="{Binding Path=TotalList.Address}"/>
+                <DataGridTextColumn Header="Name" Width="auto" Binding="{Binding Path=TotalList.Name}"/>
+                <DataGridTextColumn Header="Date" Width="0.3*"  Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                <DataGridTextColumn Header="TOV" Width="0.4*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="RZP" Width="0.4*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
             </DataGrid.Columns>
-        </DataGrid>            
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label Content="Total Count: "/>
+            <Label Content="{Binding CountItem}"/>            
+        </StackPanel>
     </Grid>
 </UserControl>

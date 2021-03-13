@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="DefaulterList.Views.Search"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DefaulterList.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="800">
+    <Grid>
+        <Border Style="{StaticResource BorderRadius}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>                    
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0"
+                       Margin="5"
+                       Content="Search: "/>
+
+                <TextBox Grid.Column="1"
+                         Margin="5">
+                    <TextBox.InputBindings>
+                          <KeyBinding Command="{Binding Search}" 
+                                      CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"
+                                      Key="Return"/>
+                    </TextBox.InputBindings> 
+                </TextBox>
+
+                <ComboBox Grid.Column="2"
+                          Margin="5"
+                          Width="100"
+                          HorizontalContentAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          ItemsSource="{Binding TextComboBox }" 
+                          SelectedItem="{Binding FirstComboSelect, Mode=TwoWay}"/>
+
+                <TextBox Grid.Column="3"
+                         Margin="5" 
+                         Width="100"
+                         Text="{Binding FirstField}"/>
+
+                <Label Grid.Column="4"
+                       Margin="10,5,10,5"
+                       Content="and"/>
+
+                <ComboBox Grid.Column="5"
+                          Margin="5"
+                          Width="100"
+                          HorizontalContentAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          ItemsSource="{Binding TextComboBox }" 
+                          SelectedItem="{Binding SecondaryComboSelect, Mode=TwoWay}"/>
+
+                <TextBox Grid.Column="6"
+                         Margin="5"
+                         Width="100"
+                         Text="{Binding SecondaryField}"/>
+                
+            </Grid>
+        </Border>            
+    </Grid>
+</UserControl>
