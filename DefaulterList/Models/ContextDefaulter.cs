@@ -15,12 +15,9 @@ namespace DefaulterList.Models
         public DbSet<TotalList> TotalLists { get; set; }
         public DbSet<Defaulter> Defaulters { get; set; }
         public DbSet<Worker> Workers { get; set; }
-        public DbSet<Team> Teams { get; set; }
-        public DbSet<Result> Results { get; set; }
+        public DbSet<Team> Teams { get; set; }       
 
         public DbSet<Dictionary> Dictionaries { get; set; }
-
-
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

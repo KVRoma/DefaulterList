@@ -17,6 +17,10 @@
                 <Separator/>
                 <MenuItem Header="Exit"/>
             </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Task" Command="{Binding TaskView}"/>
+                <MenuItem Header="Tools Team" Command="{Binding TeamView}"/>
+            </MenuItem>
             <Separator Margin="10,0,0,0"/>
             <MenuItem Header="Clear" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">
                 <MenuItem Header="Team" Command="{Binding ClearTeam}"/>

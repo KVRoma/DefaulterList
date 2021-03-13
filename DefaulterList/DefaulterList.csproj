@@ -93,9 +93,7 @@
     <Compile Include="DisplayRootRegistry.cs" />
     <Compile Include="Models\ContextDefaulter.cs" />
     <Compile Include="Models\Defaulter.cs" />
-    <Compile Include="Models\DefaulterGrid.cs" />
     <Compile Include="Models\Dictionary.cs" />
-    <Compile Include="Models\Result.cs" />
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\TotalList.cs" />
     <Compile Include="Models\Worker.cs" />

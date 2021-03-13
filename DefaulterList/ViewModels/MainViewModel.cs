@@ -198,13 +198,19 @@ namespace DefaulterList.ViewModels
 
         private Command _getTotalList;
         private Command _getDefaulter;
+
         private Command _addTeam;
         private Command _addWorkerTeam;
         private Command _addWorker;
+
         private Command _visibleClear;
         private Command _clearTeam;
         private Command _clearWorker;
+
         private Command _search;
+
+        private Command _taskView;
+        private Command _teamView;
 
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
@@ -236,6 +242,7 @@ namespace DefaulterList.ViewModels
             });            
             StopProgressBar();
         }));
+
         public Command AddTeam => _addTeam ?? (_addTeam = new Command(obj=> 
         {
             string item = obj.ToString();
@@ -287,6 +294,7 @@ namespace DefaulterList.ViewModels
                 WorkerFilter = "";
             }
         }));
+
         public Command VisibleClear => _visibleClear ?? (_visibleClear = new Command(obj=> 
         {
             IsVisibility["MenuClear"] = (IsVisibility["MenuClear"] == Visibility.Collapsed) ? (Visibility.Visible) : (Visibility.Collapsed);
@@ -304,6 +312,7 @@ namespace DefaulterList.ViewModels
             db.SaveChanges();
             LoadWorker();
         }));
+
         public Command Search => _search ?? (_search = new Command(obj=> 
         {
             string item = obj.ToString();            
@@ -325,6 +334,24 @@ namespace DefaulterList.ViewModels
             }
         }));
 
+        public Command TaskView => _taskView ?? (_taskView = new Command(obj=> 
+        {
+            IsVisibility["Grid"] = Visibility.Visible;
+            IsVisibility["RightPanelGrid"] = Visibility.Visible;
+            IsVisibility["LeftPanel"] = Visibility.Collapsed;
+            IsVisibility["RightPanel"] = Visibility.Collapsed;
+            OnPropertyChanged(nameof(IsVisibility));
+        }));
+        public Command TeamView => _teamView ?? (_teamView = new Command(obj=> 
+        {
+            IsVisibility["Grid"] = Visibility.Collapsed;
+            IsVisibility["RightPanelGrid"] = Visibility.Collapsed;
+            IsVisibility["LeftPanel"] = Visibility.Visible;
+            IsVisibility["RightPanel"] = Visibility.Visible;
+            OnPropertyChanged(nameof(IsVisibility));
+        }));
+
+
         
 
         public MainViewModel()
@@ -338,8 +365,7 @@ namespace DefaulterList.ViewModels
         private void InitializedDB()
         {            
             db = new ContextDefaulter();
-            db.Defaulters.Include(x => x.TotalList).Load();         
-            db.Results.Include(x=>x.TotalList).Include(x=>x.Team).Load();
+            db.Defaulters.Include(x => x.TotalList).Load();                     
             LoadWorker();
             LoadTeam();
             LoadTotalList();
@@ -363,7 +389,7 @@ namespace DefaulterList.ViewModels
         private void LoadDefaulters()
         {            
             dateLoad = db.Dictionaries.FirstOrDefault(x=>x.NameKey == "DateLoad")?.ValueKeyDate ?? DateTime.MinValue;
-            Defaulters = db.Defaulters.Local.ToBindingList().Where(x=>x.Date == dateLoad);
+            Defaulters = db.Defaulters.Local.ToBindingList().Where(x=>x.Date == dateLoad).OrderBy(x=>x.TotalList.Address);
             CountItem = Defaulters?.Count() ?? 0;
         }
         private void LoadComboBox()
@@ -396,8 +422,9 @@ namespace DefaulterList.ViewModels
             IsVisibility = new Dictionary<string, Visibility>
             {
                 { "Grid", Visibility.Visible},
-                { "LeftPanel", Visibility.Visible },
-                { "RightPanel", Visibility.Visible},
+                { "RightPanelGrid", Visibility.Visible},
+                { "LeftPanel", Visibility.Collapsed },
+                { "RightPanel", Visibility.Collapsed},
                 { "Menu", Visibility.Visible},
                 { "MenuClear", Visibility.Collapsed},
                 { "Footer", Visibility.Collapsed},

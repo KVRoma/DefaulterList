@@ -26,10 +26,7 @@
                 <Style TargetType="DataGridRow">
                     <Setter Property="Background" Value="{Binding Path=Color}"/>
                 </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.InputBindings>
-                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddName}"/>
-            </DataGrid.InputBindings>
+            </DataGrid.RowStyle>            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Number" Width="auto"  Binding="{Binding Path=TotalList.Number}"/>
                 <DataGridTextColumn Header="Address" Width="*" Binding="{Binding Path=TotalList.Address}"/>

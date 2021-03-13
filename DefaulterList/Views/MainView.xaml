@@ -54,8 +54,9 @@
         </Border>
 
         <!--Centr panel-->
-        <Border Grid.Row="1" 
-                Grid.Column="1"
+        <Border Grid.Row="1"                 
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
                 Style="{StaticResource BorderRadius}"
                 Visibility="{Binding IsVisibility[Grid]}"
                 Opacity="{Binding OpacityProgressBar}">

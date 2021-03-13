@@ -10,8 +10,7 @@ namespace DefaulterList.Models
     {
         public int Id { get; set; }        
         public string NameTeam { get; set; }
-        public string Descriptions { get; set; }
-                 
-        public List<Result> Results { get; set; }
+        public string Descriptions { get; set; }       
+        
     }
 }

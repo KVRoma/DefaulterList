@@ -13,22 +13,20 @@ namespace DefaulterList.Models
         public decimal DebtTOV { get; set; }
         public decimal DebtRZP { get; set; }
 
+        public DateTime DateResult { get; set; }
+        public string DescriptionResult { get; set; }
+        public decimal PaymentTOVResult { get; set; }
+        public decimal PaymentRZPResult { get; set; }
+        public bool IsDisabled { get; set; } = false;
+
+        public string NameTeam { get; set; }
+        public string Descriptions { get; set; }
+
+        public string Color { get; set; } = "White";
+
         public int? TotalListId { get; set; }
         public TotalList TotalList { get; set; }
 
-        public static implicit operator DefaulterGrid(Defaulter def)
-        {
-            return new DefaulterGrid() 
-            {
-                Address = def.TotalList.Address,
-                Name = def.TotalList.Name,
-                Number = def.TotalList.Number,
-                Date = def.Date,
-                DebtRZP = def.DebtRZP,
-                DebtTOV = def.DebtTOV,
-                DefaulterId = def.Id,               
-                TotalListId = def.TotalListId
-            };
-        }
+        
     }
 }
