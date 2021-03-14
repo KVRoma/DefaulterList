@@ -35,6 +35,14 @@ namespace DefaulterList.Models
             }
         }
 
+        public string Search
+        {
+            get
+            {
+                return TotalList.Number + TotalList.City;
+            }
+        }
+
         
     }
 }

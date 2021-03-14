@@ -312,6 +312,7 @@ namespace DefaulterList.ViewModels
         private Command _saveResult;
 
         private Command _printGrid;
+        private Command _printReportToday;
         //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
@@ -360,7 +361,7 @@ namespace DefaulterList.ViewModels
             else
             {
                 Team newTeam = new Team() { };
-                newTeam.NameTeam = (Teams.Count() <= 0) ? ("Command-1") : ("Command-" + (Teams.Max(x=>x.Id) + 1).ToString());
+                newTeam.NameTeam = (Teams.Count() <= 0) ? ("Бригада-1") : ("Бригада-" + (Teams.Max(x=>x.Id) + 1).ToString());
                 newTeam.Descriptions = item;
                
                 db.Teams.Add(newTeam);
@@ -448,7 +449,7 @@ namespace DefaulterList.ViewModels
             LoadDefaulters();
             if (!string.IsNullOrWhiteSpace(item))
             {
-                Defaulters = Defaulters.Where(x => x.TotalList.City.ToUpper().Contains(item.ToUpper()));
+                Defaulters = Defaulters.Where(x => x.Search.ToUpper().Contains(item.ToUpper()));
                 CountItem = Defaulters?.Count() ?? 0;                
             }
             if (!string.IsNullOrWhiteSpace(FirstComboSelect))
@@ -572,8 +573,34 @@ namespace DefaulterList.ViewModels
             
         }));
 
-        public Command PrintGrid => _printGrid ?? (_printGrid = new Command(obj=> 
+        public Command PrintGrid => _printGrid ?? (_printGrid = new Command(async obj=> 
         {
+            StartProgressBar();
+            await Task.Run(()=> 
+            {            
+                if (Defaulters.Count() > 0)
+                {
+                    PrintService service = new PrintService();
+                    service.Defaulters = Defaulters;
+                    service.PrintList("\\Blanks\\Reestr");
+                }
+            });
+            StopProgressBar();
+        }));
+        public Command PrintReportToday => _printReportToday ?? (_printReportToday = new Command(async obj=> 
+        {
+            LoadDefaulters();
+            StartProgressBar();
+            await Task.Run(() =>
+            {
+                if (Defaulters.Count() > 0)
+                {
+                    PrintService service = new PrintService();
+                    service.Defaulters = Defaulters;
+                    service.PrintReportToday("\\Blanks\\ReportToday", DateResult);
+                }
+            });
+            StopProgressBar();
         }));
 
         

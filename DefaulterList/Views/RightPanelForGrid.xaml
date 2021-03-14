@@ -16,6 +16,8 @@
         </Grid.RowDefinitions>
 
         <DatePicker Grid.Row="0" 
+                    Foreground="Blue"
+                    FontWeight="Bold"                    
                     SelectedDate="{Binding DateResult}"/>
 
         <Label Grid.Row="1" 
