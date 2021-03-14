@@ -44,7 +44,8 @@ namespace DefaulterList.ViewModels
 
         private string teamSaveValue;  // контейнер для вибраної бригади
 
-        public string TitleView { get; } = "Defaulter List - 2021";
+        public string TitleView { get; } = "Defaulter List - 2021 (Робота з боржниками)";
+        public string Author { get; } = "© 'Kuchinik & Co.' Версія 1.0.2021  ";
         public double OpacityProgressBar
         {
             get { return opacityProgressBar; }

@@ -88,6 +88,12 @@
                     </Button.Content>
                 </Button>                
             </StackPanel>
+            <Label Content="{Binding Author}" 
+                   HorizontalAlignment="Right"
+                   FontWeight="Bold"
+                   FontStyle="Italic" 
+                   Foreground="Black" 
+                   FontSize="10"/>
         </StackPanel>
 
         
