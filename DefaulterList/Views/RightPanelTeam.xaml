@@ -16,7 +16,7 @@
 
         <Label Grid.Row="0" 
                FontWeight="Bold"
-               Content="Team list" 
+               Content="Створення бригад" 
                HorizontalAlignment="Center"/>
 
         <Border Grid.Row="1"
@@ -46,13 +46,13 @@
                                 Key="Delete"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Team" 
+                    <DataGridTextColumn Header="Назва" 
                                         Foreground="Blue" 
                                         FontSize="12"
                                         FontWeight="Bold"
                                         Width="auto" 
                                         Binding="{Binding Path=NameTeam}"/>
-                    <DataGridTextColumn Header="Name" 
+                    <DataGridTextColumn Header="Працівники" 
                                         Width="*" 
                                         FontStyle="Italic"
                                         Binding="{Binding Path=Descriptions}"/>

@@ -16,7 +16,7 @@
 
 
         <Label Grid.Row="0" 
-               Content="Worker list" 
+               Content="Перелік працівників" 
                FontWeight="Bold"
                HorizontalAlignment="Center"/>
 
@@ -46,7 +46,7 @@
                                 Key="Delete"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>                    
-                    <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}"/>                    
+                    <DataGridTextColumn Header="П.І.Б." Width="*" Binding="{Binding Path=Name}"/>                    
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

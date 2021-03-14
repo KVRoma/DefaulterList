@@ -34,6 +34,7 @@ namespace DefaulterList.ViewModels
         private string secondaryComboSelect;
         private List<string> textComboBox;
         private DateTime dateResult;
+        private bool isCheckedFinish;
 
         private string info;
         private string description;
@@ -228,6 +229,15 @@ namespace DefaulterList.ViewModels
                 OnPropertyChanged(nameof(DateResult));
             }
         }
+        public bool IsCheckedFinish
+        {
+            get { return isCheckedFinish; }
+            set
+            {
+                isCheckedFinish = value;
+                OnPropertyChanged(nameof(IsCheckedFinish));
+            }
+        }
 
         public string Info
         {
@@ -277,6 +287,7 @@ namespace DefaulterList.ViewModels
         //****************************************************************************
         private Command _getTotalList;
         private Command _getDefaulter;
+        private Command _exitApp;
 
         private Command _addTeam;
         private Command _delTeam;
@@ -287,6 +298,7 @@ namespace DefaulterList.ViewModels
         private Command _visibleClear;
         private Command _clearTeam;
         private Command _clearWorker;
+        private Command _clearDefaulter;
 
         private Command _search;
 
@@ -298,6 +310,8 @@ namespace DefaulterList.ViewModels
         private Command _filterTeamForGrid;
         private Command _addResult;
         private Command _saveResult;
+
+        private Command _printGrid;
         //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
@@ -306,10 +320,12 @@ namespace DefaulterList.ViewModels
             { 
                 LoadService service = new LoadService();
                 service.LoadTotalListCSV();
+                db.Defaulters.RemoveRange(db.Defaulters);
                 db.TotalLists.RemoveRange(db.TotalLists);
                 db.TotalLists.AddRange(service.TotalLists);
                 db.SaveChanges();
                 LoadTotalList();
+                LoadDefaulters();
             });
             StopProgressBar();
         }));
@@ -328,6 +344,10 @@ namespace DefaulterList.ViewModels
                 LoadDefaulters();
             });            
             StopProgressBar();
+        }));
+        public Command ExitApp => _exitApp ?? (_exitApp = new Command(obj=> 
+        {
+            ExitApplication();
         }));
 
         public Command AddTeam => _addTeam ?? (_addTeam = new Command(obj=> 
@@ -415,6 +435,12 @@ namespace DefaulterList.ViewModels
             db.SaveChanges();
             LoadWorker();
         }));
+        public Command ClearDefaulter => _clearDefaulter ?? (_clearDefaulter = new Command(obj=> 
+        {
+            db.Defaulters.RemoveRange(db.Defaulters);
+            db.SaveChanges();
+            LoadDefaulters();
+        }));
 
         public Command Search => _search ?? (_search = new Command(obj=> 
         {
@@ -433,6 +459,11 @@ namespace DefaulterList.ViewModels
             if (!string.IsNullOrWhiteSpace(SecondaryComboSelect))
             {
                 Defaulters = Defaulters.Where(x => Operator(SecondaryComboSelect, x.DebtTOV, SecondaryField));
+                CountItem = Defaulters?.Count() ?? 0;
+            }
+            if (!IsCheckedFinish)
+            {
+                Defaulters = Defaulters.Where(x => x.Color == "White");
                 CountItem = Defaulters?.Count() ?? 0;
             }
         }));
@@ -541,6 +572,10 @@ namespace DefaulterList.ViewModels
             
         }));
 
+        public Command PrintGrid => _printGrid ?? (_printGrid = new Command(obj=> 
+        {
+        }));
+
         
 
         public MainViewModel()
@@ -551,6 +586,7 @@ namespace DefaulterList.ViewModels
             DefaultersSelect = new List<Defaulter>();
             DateResult = DateTime.Today;
             SearchText = "";
+            IsCheckedFinish = true;
             
         }
 
@@ -577,6 +613,18 @@ namespace DefaulterList.ViewModels
         {
             db.TotalLists.Load();
             TotalLists = db.TotalLists.Local.ToBindingList();
+            if (TotalLists?.Count() <= 0)
+            {
+                IsVisibility["db"] = Visibility.Collapsed;
+                IsVisibility["MenuClear"] = Visibility.Visible;
+                OnPropertyChanged(nameof(IsVisibility));
+            }
+            else
+            {
+                IsVisibility["db"] = Visibility.Visible;
+                IsVisibility["MenuClear"] = Visibility.Collapsed;
+                OnPropertyChanged(nameof(IsVisibility));
+            }
         }
         private void LoadDefaulters()
         {            
@@ -621,7 +669,8 @@ namespace DefaulterList.ViewModels
                 { "Menu", Visibility.Visible},
                 { "MenuClear", Visibility.Collapsed},
                 { "Footer", Visibility.Collapsed},
-                { "ProgressBar", Visibility.Collapsed}
+                { "ProgressBar", Visibility.Collapsed},
+                { "db", Visibility.Collapsed}
             };
             OpacityProgressBar = 1;
         }
@@ -663,6 +712,15 @@ namespace DefaulterList.ViewModels
                 return true;
             }
             return false;
+        }
+        /// <summary>
+        /// Метод закриває программу
+        /// </summary>        
+        private void ExitApplication()
+        {
+            db.Dispose();
+            Application app = Application.Current;
+            app.Shutdown();
         }
     }
 }

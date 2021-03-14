@@ -11,20 +11,22 @@
             <Menu.InputBindings>
                 <MouseBinding Gesture="RightDoubleClick" Command="{Binding VisibleClear}"/>
             </Menu.InputBindings>
-            <MenuItem Header="File">
-                <MenuItem Header="Load db" Command="{Binding GetTotalList}"/>
-                <MenuItem Header="Load Defaulter list" Command="{Binding GetDefaulter}"/>
+            <MenuItem Header="Робота" Visibility="{Binding IsVisibility[db]}">                
+                <MenuItem Header="Завантажити боржників" Command="{Binding GetDefaulter}"/>
                 <Separator/>
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Вихід" Foreground="Red" Command="{Binding ExitApp}"/>
             </MenuItem>
-            <MenuItem Header="View">
-                <MenuItem Header="Task" Command="{Binding TaskView}"/>
-                <MenuItem Header="Tools Team" Command="{Binding TeamView}"/>
+            <MenuItem Header="Перегляд" Visibility="{Binding IsVisibility[db]}">
+                <MenuItem Header="Завдання" Command="{Binding TaskView}"/>
+                <MenuItem Header="Налаштування" Command="{Binding TeamView}"/>
             </MenuItem>
             <Separator Margin="10,0,0,0"/>
-            <MenuItem Header="Clear" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">
-                <MenuItem Header="Team" Command="{Binding ClearTeam}"/>
-                <MenuItem Header="Worker" Command="{Binding ClearWorker}"/>
+            <MenuItem Header="Очистити" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">
+                <MenuItem Header="Виконавців" Foreground="Green" Command="{Binding ClearWorker}"/>
+                <MenuItem Header="Бригади" Foreground="Green" Command="{Binding ClearTeam}"/>
+                <MenuItem Header="Реєстри" Foreground="Green" Command="{Binding ClearDefaulter}"/>
+                <Separator/>
+                <MenuItem Header="Завантажити БД" Command="{Binding GetTotalList}"/>
             </MenuItem>
         </Menu>
     </Grid>

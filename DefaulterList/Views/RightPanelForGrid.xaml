@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DefaulterList.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="300">
+             d:DesignHeight="600" d:DesignWidth="350">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -19,7 +19,9 @@
                     SelectedDate="{Binding DateResult}"/>
 
         <Label Grid.Row="1" 
-               Content="Перелік бригад"/>
+               Content="Перелік бригад"
+               HorizontalContentAlignment="Center"
+               FontWeight="Bold"/>
 
         <DataGrid Grid.Row="2" 
                   AutoGenerateColumns="False"                   
@@ -46,7 +48,9 @@
                     HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <Button Style="{StaticResource FooterButton}"
-                        Command="{Binding FilterTeamForGrid}">
+                        Command="{Binding FilterTeamForGrid}"
+                        Foreground="Green"
+                        BorderBrush="Green">
                     <Button.Content>
                         <TextBlock TextAlignment="Center">
                             <Run Text="Фільтрувати"/>
@@ -55,8 +59,23 @@
                         </TextBlock>
                     </Button.Content>
                 </Button>
-                
+
                 <Button Style="{StaticResource FooterButton}"
+                        Command="{Binding PrintGrid}"
+                        Foreground="Blue"
+                        BorderBrush="Blue">
+                    <Button.Content>
+                        <TextBlock TextAlignment="Center">
+                            <Run Text="Друк"/>
+                            <LineBreak/>
+                            <Run Text="реєстру"/>
+                        </TextBlock>
+                    </Button.Content>
+                </Button>
+
+                <Button Style="{StaticResource FooterButton}"
+                        Foreground="Red"
+                        BorderBrush="Red"
                         Command="{Binding DelTeamForGrid}">
                     <Button.Content>
                         <TextBlock TextAlignment="Center">
@@ -65,7 +84,7 @@
                             <Run Text="бригаду"/>
                         </TextBlock>
                     </Button.Content>
-                </Button>
+                </Button>                
             </StackPanel>
         </StackPanel>
 
