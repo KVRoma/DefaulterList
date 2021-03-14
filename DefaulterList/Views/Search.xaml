@@ -26,7 +26,8 @@
                        Content="Пошук: "/>
 
                 <TextBox Grid.Column="1"
-                         Margin="5">
+                         Margin="5"
+                         Text="{Binding SearchText}">
                     <TextBox.InputBindings>
                           <KeyBinding Command="{Binding Search}" 
                                       CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType={x:Type TextBox}},Path=Text}"

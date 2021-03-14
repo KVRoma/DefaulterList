@@ -103,6 +103,9 @@
     <Compile Include="Views\CentrGridDefaulter.xaml.cs">
       <DependentUpon>CentrGridDefaulter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FooterPanel.xaml.cs">
+      <DependentUpon>FooterPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LeftPanelWorker.xaml.cs">
       <DependentUpon>LeftPanelWorker.xaml</DependentUpon>
     </Compile>
@@ -122,6 +125,10 @@
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\CentrGridDefaulter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FooterPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -27,6 +27,14 @@ namespace DefaulterList.Models
         public int? TotalListId { get; set; }
         public TotalList TotalList { get; set; }
 
+        public string FullNameItem 
+        {
+            get 
+            { 
+                return NameTeam +  " - ( О/р  " + TotalList.Number + "   < " + TotalList.Address + "  -  " + TotalList.Name + " > )"; 
+            }
+        }
+
         
     }
 }

@@ -27,7 +27,10 @@
                     <Setter Property="Background" Value="{Binding Path=Color}"/>
                     <Setter Property="FontSize" Value="10"/>
                 </Style>
-            </DataGrid.RowStyle>            
+            </DataGrid.RowStyle>
+            <DataGrid.InputBindings>
+                <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddResult}"/>
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="О/р" Width="auto"  Binding="{Binding Path=TotalList.Number}"/>
                 <DataGridTextColumn Header="Адреса" Width="*" Binding="{Binding Path=TotalList.Address}"/>

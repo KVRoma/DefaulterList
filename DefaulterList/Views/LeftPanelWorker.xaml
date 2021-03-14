@@ -42,6 +42,8 @@
                       SelectedItem="{Binding WorkerSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">                
                 <DataGrid.InputBindings>
                     <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddWorkerTeam}"/>
+                    <KeyBinding Command="{Binding DelWorker}"                                
+                                Key="Delete"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>                    
                     <DataGridTextColumn Header="Name" Width="*" Binding="{Binding Path=Name}"/>                    

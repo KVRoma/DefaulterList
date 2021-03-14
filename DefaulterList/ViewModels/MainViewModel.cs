@@ -17,7 +17,7 @@ namespace DefaulterList.ViewModels
         private double opacityProgressBar;
         private Dictionary<string, Visibility> isVisibility;
         private Team teamSelect;
-        private IEnumerable<Team> teams;
+        private IEnumerable<Team> teams;        
         private string teamFilter;
         private Worker workerSelect;
         private IEnumerable<Worker> workers;
@@ -25,13 +25,23 @@ namespace DefaulterList.ViewModels
         private IEnumerable<TotalList> totalLists;
         private IList<Defaulter> defaultersSelect;
         private IEnumerable<Defaulter> defaulters;
-        private int countItem;        
+        
+        private int countItem;
+        private string searchText;
         private decimal firstField;
         private decimal secondaryField;
         private string firstComboSelect;        
         private string secondaryComboSelect;
         private List<string> textComboBox;
+        private DateTime dateResult;
 
+        private string info;
+        private string description;
+        private bool isDisabled;
+        private decimal payTOV;
+        private decimal payRZP;
+
+        private string teamSaveValue;  // контейнер для вибраної бригади
 
         public string TitleView { get; } = "Defaulter List - 2021";
         public double OpacityProgressBar
@@ -59,6 +69,10 @@ namespace DefaulterList.ViewModels
             {
                 teamSelect = value;
                 OnPropertyChanged(nameof(TeamSelect));
+                if (TeamSelect != null)
+                {
+                    teamSaveValue = TeamSelect.NameTeam;
+                }
             }
         }
         public IEnumerable<Team> Teams
@@ -69,7 +83,7 @@ namespace DefaulterList.ViewModels
                 teams = value;
                 OnPropertyChanged(nameof(Teams));
             }
-        }
+        }        
         public string TeamFilter
         {
             get { return teamFilter; }
@@ -133,6 +147,7 @@ namespace DefaulterList.ViewModels
                 OnPropertyChanged(nameof(Defaulters));
             }
         }
+       
         public int CountItem
         {
             get { return countItem; }
@@ -141,7 +156,16 @@ namespace DefaulterList.ViewModels
                 countItem = value;
                 OnPropertyChanged(nameof(CountItem));
             }
-        }        
+        }
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                searchText = value;
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
         public decimal FirstField
         {
             get { return firstField; }
@@ -195,13 +219,70 @@ namespace DefaulterList.ViewModels
                 OnPropertyChanged(nameof(TextComboBox));
             }
         }
+        public DateTime DateResult
+        {
+            get { return dateResult; }
+            set
+            {
+                dateResult = value;
+                OnPropertyChanged(nameof(DateResult));
+            }
+        }
 
+        public string Info
+        {
+            get { return info; }
+            set
+            {
+                info = value;
+                OnPropertyChanged(nameof(Info));
+            }
+        }
+        public string Description
+        {
+            get { return description; }
+            set
+            {
+                description = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
+        public bool IsDisabled
+        {
+            get { return isDisabled; }
+            set
+            {
+                isDisabled = value;
+                OnPropertyChanged(nameof(IsDisabled));
+            }
+        }
+        public decimal PayTOV
+        {
+            get { return payTOV; }
+            set
+            {
+                payTOV = value;
+                OnPropertyChanged(nameof(PayTOV));
+            }
+        }
+        public decimal PayRZP
+        {
+            get { return payRZP; }
+            set
+            {
+                payRZP = value;
+                OnPropertyChanged(nameof(PayRZP));
+            }
+        }
+        //****************************************************************************
         private Command _getTotalList;
         private Command _getDefaulter;
 
         private Command _addTeam;
+        private Command _delTeam;
         private Command _addWorkerTeam;
         private Command _addWorker;
+        private Command _delWorker;
 
         private Command _visibleClear;
         private Command _clearTeam;
@@ -212,6 +293,12 @@ namespace DefaulterList.ViewModels
         private Command _taskView;
         private Command _teamView;
 
+        private Command _addTeamForGrid;
+        private Command _delTeamForGrid;
+        private Command _filterTeamForGrid;
+        private Command _addResult;
+        private Command _saveResult;
+        //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
             StartProgressBar();
@@ -263,6 +350,16 @@ namespace DefaulterList.ViewModels
                 TeamFilter = "";                   
             }
         }));
+        public Command DelTeam => _delTeam ?? (_delTeam = new Command(obj=> 
+        {
+            var temp = db.Defaulters.Where(x => x.NameTeam == TeamSelect.NameTeam).FirstOrDefault();
+            if (temp == null)
+            {
+                db.Teams.Remove(TeamSelect);
+                db.SaveChanges();
+                LoadTeam();
+            }
+        }));
         public Command AddWorkerTeam => _addWorkerTeam ?? (_addWorkerTeam = new Command(obj=> 
         {
             if (string.IsNullOrWhiteSpace(TeamFilter))
@@ -293,6 +390,12 @@ namespace DefaulterList.ViewModels
 
                 WorkerFilter = "";
             }
+        }));
+        public Command DelWorker => _delWorker ?? (_delWorker = new Command(obj=> 
+        {
+            db.Workers.Remove(WorkerSelect);
+            db.SaveChanges();
+            LoadWorker();
         }));
 
         public Command VisibleClear => _visibleClear ?? (_visibleClear = new Command(obj=> 
@@ -351,6 +454,92 @@ namespace DefaulterList.ViewModels
             OnPropertyChanged(nameof(IsVisibility));
         }));
 
+        public Command AddTeamForGrid => _addTeamForGrid ?? (_addTeamForGrid = new Command(obj=> 
+        {
+            if (TeamSelect != null)
+            {
+                foreach (var item in DefaultersSelect)
+                {
+                    item.DateResult = DateResult;
+                    item.NameTeam = TeamSelect.NameTeam;
+                    item.Descriptions = TeamSelect.Descriptions;
+                    db.Entry(item).State = EntityState.Modified;
+                }
+                db.SaveChanges();
+                Search.Execute(SearchText);                
+                
+            }
+        }));
+        public Command DelTeamForGrid => _delTeamForGrid ?? (_delTeamForGrid = new Command(obj=> 
+        {
+            
+            foreach (var item in DefaultersSelect)
+            {
+                if (IsResultNull(item))
+                {
+                    item.DateResult = null;
+                    item.NameTeam = "";
+                    item.Descriptions = "";
+                    db.Entry(item).State = EntityState.Modified;
+                }
+            }
+            db.SaveChanges();
+            Search.Execute(SearchText);           
+           
+
+        }));
+        public Command FilterTeamForGrid => _filterTeamForGrid ?? (_filterTeamForGrid = new Command(obj=> 
+        {
+            LoadDefaulters();
+            Defaulters = Defaulters.Where(x => x.DateResult == DateResult &&
+                                                  x.NameTeam == TeamSelect.NameTeam)
+                                      .OrderBy(x => x.TotalList.Address);
+            CountItem = Defaulters?.Count() ?? 0;
+        }));
+        public Command AddResult => _addResult ?? (_addResult = new Command(obj=> 
+        {
+            var item = DefaultersSelect.FirstOrDefault();
+            if (item.NameTeam != "")
+            {                
+                Info = item.FullNameItem;
+                IsDisabled = item.IsDisabled;
+                Description = item.DescriptionResult;
+                PayTOV = item.PaymentTOVResult;
+                PayRZP = item.PaymentRZPResult;
+                IsVisibility["Footer"] = Visibility.Visible;
+                OnPropertyChanged(nameof(IsVisibility));
+            }
+        }));
+        public Command SaveResult => _saveResult ?? (_saveResult = new Command(obj=>
+        {            
+            var item = DefaultersSelect.FirstOrDefault();
+            item.IsDisabled = IsDisabled;
+            item.DescriptionResult = Description;
+            item.PaymentTOVResult = PayTOV;
+            item.PaymentRZPResult = PayRZP;
+            item.Color = "White";
+            if (PayTOV >= item.DebtTOV)
+            {
+                item.Color = "Green";
+            }
+            if (PayTOV > 0m && PayTOV < item.DebtTOV)
+            {
+                item.Color = "Yellow";
+            }
+            if (IsDisabled)
+            {
+                item.Color = "Red";
+            }
+            
+            db.Entry(item).State = EntityState.Modified;
+            db.SaveChanges();
+            
+            IsVisibility["Footer"] = Visibility.Collapsed;
+            OnPropertyChanged(nameof(IsVisibility));
+            TeamSelect = Teams.FirstOrDefault(x => x.NameTeam == teamSaveValue);
+            FilterTeamForGrid.Execute("");
+            
+        }));
 
         
 
@@ -360,6 +549,9 @@ namespace DefaulterList.ViewModels
             InitializedDB();
             LoadComboBox();
             DefaultersSelect = new List<Defaulter>();
+            DateResult = DateTime.Today;
+            SearchText = "";
+            
         }
 
         private void InitializedDB()
@@ -392,6 +584,7 @@ namespace DefaulterList.ViewModels
             Defaulters = db.Defaulters.Local.ToBindingList().Where(x=>x.Date == dateLoad).OrderBy(x=>x.TotalList.Address);
             CountItem = Defaulters?.Count() ?? 0;
         }
+       
         private void LoadComboBox()
         {
             TextComboBox = new List<string>() 
@@ -453,7 +646,7 @@ namespace DefaulterList.ViewModels
             db.SaveChanges();            
 
         }
-        public  bool Operator(string logic, decimal x, decimal y)
+        private  bool Operator(string logic, decimal x, decimal y)
         {
             switch (logic)
             {
@@ -462,6 +655,14 @@ namespace DefaulterList.ViewModels
                 case "==": return x == y;
                 default: throw new Exception("invalid logic");
             }
+        }
+        private bool IsResultNull(Defaulter item)
+        {
+            if ((!item.IsDisabled) && item.PaymentTOVResult <= 0m && item.PaymentRZPResult <= 0m && string.IsNullOrWhiteSpace(item.DescriptionResult))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

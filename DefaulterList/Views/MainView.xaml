@@ -83,11 +83,11 @@
         <!--Footer menu-->
         <Border Grid.Row="2" 
                 Grid.Column="0" 
-                Grid.ColumnSpan="3"
+                Grid.ColumnSpan="2"
                 Style="{StaticResource BorderRadius}"
                 Visibility="{Binding IsVisibility[Footer]}"
-                Opacity="{Binding OpacityProgressBar}">            
-
+                Opacity="{Binding OpacityProgressBar}">
+            <local:FooterPanel/>
         </Border>
 
     </Grid>

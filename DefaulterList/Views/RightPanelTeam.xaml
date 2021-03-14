@@ -42,6 +42,8 @@
                       SelectedItem="{Binding TeamSelect, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <DataGrid.InputBindings>
                     <MouseBinding Gesture="LeftDoubleClick" Command="{Binding AddTask}"/>
+                    <KeyBinding Command="{Binding DelTeam}"                                
+                                Key="Delete"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Team" 
