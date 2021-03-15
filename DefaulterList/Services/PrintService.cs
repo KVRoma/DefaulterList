@@ -100,5 +100,37 @@ namespace DefaulterList.Services
                 ExcelApp.UserControl = true;       // Передаємо керування користувачу  
             }
         }
+        public void PrintReportTelegram(string path, DateTime date)
+        {
+            Excel.Application ExcelApp = new Excel.Application();
+            Excel.Workbook ExcelWorkBook;
+            try
+            {
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону                               
+
+                ExcelApp.Cells[4, 1] = date.ToShortDateString();
+
+                ExcelApp.Cells[4, 2] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date && x.PaymentRZPResult > 0m)?.Count() ?? 0;
+                ExcelApp.Cells[4, 3] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date)?.Select(x => x.PaymentRZPResult)?.Sum() ?? 0m;
+                ExcelApp.Cells[4, 4] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date && x.PaymentTOVResult > 0m)?.Count() ?? 0;
+                ExcelApp.Cells[4, 5] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date)?.Select(x => x.PaymentTOVResult)?.Sum() ?? 0m;
+                                
+                ExcelApp.Cells[4, 6] = Defaulters?.Where(x => x.Color == "Red" && x.DateResult == date)?.Count() ?? 0;                
+                ExcelApp.Cells[4, 7] = Defaulters?.Where(x => x.Color == "Red" && x.DateResult == date)?.Select(x => x.DebtRZP)?.Sum() ?? 0m;
+                ExcelApp.Cells[4, 8] = Defaulters?.Where(x => x.Color == "Red" && x.DateResult == date)?.Select(x => x.DebtTOV)?.Sum() ?? 0m;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                        ex.Message + Environment.NewLine + Environment.NewLine +
+                                        "StackTrace message: " + Environment.NewLine +
+                                        ex.StackTrace, "Warning !!!");
+            }
+            finally
+            {
+                ExcelApp.Visible = true;           // Робим книгу видимою
+                ExcelApp.UserControl = true;       // Передаємо керування користувачу  
+            }
+        }
     }
 }

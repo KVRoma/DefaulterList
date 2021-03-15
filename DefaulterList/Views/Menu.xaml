@@ -23,6 +23,7 @@
             <MenuItem Header="Друк" Visibility="{Binding IsVisibility[db]}">
                 <MenuItem Header="Реєстр по фільтру" Command="{Binding PrintGrid}"/>
                 <MenuItem Header="Звіт про роботу за добу" Command="{Binding PrintReportToday}"/>
+                <MenuItem Header="Звіт в Telegram" Command="{Binding PrintReportTelegram}"/>
             </MenuItem>
             <Separator Margin="10,0,0,0"/>
             <MenuItem Header="Очистити" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">

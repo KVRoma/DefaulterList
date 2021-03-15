@@ -314,6 +314,7 @@ namespace DefaulterList.ViewModels
 
         private Command _printGrid;
         private Command _printReportToday;
+        private Command _printReportTelegram;
         //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
         {
@@ -603,8 +604,24 @@ namespace DefaulterList.ViewModels
             });
             StopProgressBar();
         }));
+        public Command PrintReportTelegram => _printReportTelegram ?? (_printReportTelegram = new Command(async obj=> 
+        {
+            LoadDefaulters();
+            StartProgressBar();
+            await Task.Run(() =>
+            {
+                if (Defaulters.Count() > 0)
+                {
+                    PrintService service = new PrintService();
+                    service.Defaulters = Defaulters;
+                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", DateResult);
+                }
+            });
+            StopProgressBar();
+        }));
 
-        
+
+
 
         public MainViewModel()
         {
