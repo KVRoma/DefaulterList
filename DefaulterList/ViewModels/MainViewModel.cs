@@ -17,7 +17,7 @@ namespace DefaulterList.ViewModels
         private double opacityProgressBar;
         private Dictionary<string, Visibility> isVisibility;
         private Team teamSelect;
-        private IEnumerable<Team> teams;        
+        private IEnumerable<Team> teams;
         private string teamFilter;
         private Worker workerSelect;
         private IEnumerable<Worker> workers;
@@ -25,12 +25,12 @@ namespace DefaulterList.ViewModels
         private IEnumerable<TotalList> totalLists;
         private IList<Defaulter> defaultersSelect;
         private IEnumerable<Defaulter> defaulters;
-        
+
         private int countItem;
         private string searchText;
         private decimal firstField;
         private decimal secondaryField;
-        private string firstComboSelect;        
+        private string firstComboSelect;
         private string secondaryComboSelect;
         private List<string> textComboBox;
         private DateTime dateResult;
@@ -41,6 +41,8 @@ namespace DefaulterList.ViewModels
         private bool isDisabled;
         private decimal payTOV;
         private decimal payRZP;
+        private decimal costTOV;
+        private decimal costRZP;
 
         private string teamSaveValue;  // контейнер для вибраної бригади
 
@@ -85,7 +87,7 @@ namespace DefaulterList.ViewModels
                 teams = value;
                 OnPropertyChanged(nameof(Teams));
             }
-        }        
+        }
         public string TeamFilter
         {
             get { return teamFilter; }
@@ -137,7 +139,7 @@ namespace DefaulterList.ViewModels
             set
             {
                 defaultersSelect = value;
-                OnPropertyChanged(nameof(DefaultersSelect));                 
+                OnPropertyChanged(nameof(DefaultersSelect));
             }
         }
         public IEnumerable<Defaulter> Defaulters
@@ -149,7 +151,7 @@ namespace DefaulterList.ViewModels
                 OnPropertyChanged(nameof(Defaulters));
             }
         }
-       
+
         public int CountItem
         {
             get { return countItem; }
@@ -198,7 +200,7 @@ namespace DefaulterList.ViewModels
                     FirstField = 0m;
                 }
             }
-        }        
+        }
         public string SecondaryComboSelect
         {
             get { return secondaryComboSelect; }
@@ -274,6 +276,10 @@ namespace DefaulterList.ViewModels
             {
                 payTOV = value;
                 OnPropertyChanged(nameof(PayTOV));
+                if (PayTOV != 0m)
+                {
+                    CostTOV = 0m;
+                }
             }
         }
         public decimal PayRZP
@@ -283,6 +289,36 @@ namespace DefaulterList.ViewModels
             {
                 payRZP = value;
                 OnPropertyChanged(nameof(PayRZP));
+                if (PayRZP != 0m)
+                {
+                    CostRZP = 0m;
+                }
+            }
+        }
+        public decimal CostTOV
+        {
+            get { return costTOV; }
+            set
+            {
+                costTOV = value;
+                OnPropertyChanged(nameof(CostTOV));
+                if (CostTOV != 0m)
+                {
+                    PayTOV = 0m;
+                }
+            }
+        }
+        public decimal CostRZP
+        {
+            get { return costRZP; }
+            set
+            {
+                costRZP = value;
+                OnPropertyChanged(nameof(CostRZP));
+                if (CostRZP != 0m)
+                {
+                    PayRZP = 0m;
+                }
             }
         }
         //****************************************************************************
@@ -316,11 +352,11 @@ namespace DefaulterList.ViewModels
         private Command _printReportToday;
         private Command _printReportTelegram;
         //****************************************************************************
-        public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj=> 
+        public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj =>
         {
             StartProgressBar();
-            await Task.Run(()=> 
-            { 
+            await Task.Run(() =>
+            {
                 LoadService service = new LoadService();
                 service.LoadTotalListCSV();
                 db.Defaulters.RemoveRange(db.Defaulters);
@@ -332,28 +368,28 @@ namespace DefaulterList.ViewModels
             });
             StopProgressBar();
         }));
-        public Command GetDefaulter => _getDefaulter ?? (_getDefaulter = new Command(async obj=> 
+        public Command GetDefaulter => _getDefaulter ?? (_getDefaulter = new Command(async obj =>
         {
             DateTime date = new DateTime();
             StartProgressBar();
-            await Task.Run(()=> 
-            { 
-                LoadService service = new LoadService(TotalLists);          
+            await Task.Run(() =>
+            {
+                LoadService service = new LoadService(TotalLists);
                 service.LoadDefaulterCSV();
                 date = service.Defaulters.FirstOrDefault().Date;
                 SaveDateLoading(date);
-                db.Defaulters.AddRange(service.Defaulters);               
+                db.Defaulters.AddRange(service.Defaulters);
                 db.SaveChanges();
                 LoadDefaulters();
-            });            
+            });
             StopProgressBar();
         }));
-        public Command ExitApp => _exitApp ?? (_exitApp = new Command(obj=> 
+        public Command ExitApp => _exitApp ?? (_exitApp = new Command(obj =>
         {
             ExitApplication();
         }));
 
-        public Command AddTeam => _addTeam ?? (_addTeam = new Command(obj=> 
+        public Command AddTeam => _addTeam ?? (_addTeam = new Command(obj =>
         {
             string item = obj.ToString();
             if (item == "")
@@ -363,17 +399,17 @@ namespace DefaulterList.ViewModels
             else
             {
                 Team newTeam = new Team() { };
-                newTeam.NameTeam = (Teams.Count() <= 0) ? ("Бригада-1") : ("Бригада-" + (Teams.Max(x=>x.Id) + 1).ToString());
+                newTeam.NameTeam = (Teams.Count() <= 0) ? ("Бригада-1") : ("Бригада-" + (Teams.Max(x => x.Id) + 1).ToString());
                 newTeam.Descriptions = item;
-               
+
                 db.Teams.Add(newTeam);
                 db.SaveChanges();
                 LoadTeam();
-                
-                TeamFilter = "";                   
+
+                TeamFilter = "";
             }
         }));
-        public Command DelTeam => _delTeam ?? (_delTeam = new Command(obj=> 
+        public Command DelTeam => _delTeam ?? (_delTeam = new Command(obj =>
         {
             var temp = db.Defaulters.Where(x => x.NameTeam == TeamSelect.NameTeam).FirstOrDefault();
             if (temp == null)
@@ -383,7 +419,7 @@ namespace DefaulterList.ViewModels
                 LoadTeam();
             }
         }));
-        public Command AddWorkerTeam => _addWorkerTeam ?? (_addWorkerTeam = new Command(obj=> 
+        public Command AddWorkerTeam => _addWorkerTeam ?? (_addWorkerTeam = new Command(obj =>
         {
             if (string.IsNullOrWhiteSpace(TeamFilter))
             {
@@ -392,9 +428,9 @@ namespace DefaulterList.ViewModels
             else
             {
                 TeamFilter += Environment.NewLine + WorkerSelect.Name;
-            }            
+            }
         }));
-        public Command AddWorker => _addWorker ?? (_addWorker = new Command(obj=> 
+        public Command AddWorker => _addWorker ?? (_addWorker = new Command(obj =>
         {
             string item = obj.ToString();
             if (item == "")
@@ -405,7 +441,7 @@ namespace DefaulterList.ViewModels
             {
                 Worker newWorker = new Worker()
                 {
-                    Name = item                    
+                    Name = item
                 };
                 db.Workers.Add(newWorker);
                 db.SaveChanges();
@@ -414,45 +450,45 @@ namespace DefaulterList.ViewModels
                 WorkerFilter = "";
             }
         }));
-        public Command DelWorker => _delWorker ?? (_delWorker = new Command(obj=> 
+        public Command DelWorker => _delWorker ?? (_delWorker = new Command(obj =>
         {
             db.Workers.Remove(WorkerSelect);
             db.SaveChanges();
             LoadWorker();
         }));
 
-        public Command VisibleClear => _visibleClear ?? (_visibleClear = new Command(obj=> 
+        public Command VisibleClear => _visibleClear ?? (_visibleClear = new Command(obj =>
         {
             IsVisibility["MenuClear"] = (IsVisibility["MenuClear"] == Visibility.Collapsed) ? (Visibility.Visible) : (Visibility.Collapsed);
             OnPropertyChanged(nameof(IsVisibility));
         }));
-        public Command ClearTeam => _clearTeam ?? (_clearTeam = new Command(obj=> 
+        public Command ClearTeam => _clearTeam ?? (_clearTeam = new Command(obj =>
         {
             db.Teams.RemoveRange(db.Teams);
             db.SaveChanges();
             LoadTeam();
         }));
-        public Command ClearWorker => _clearWorker ?? (_clearWorker = new Command(obj=> 
+        public Command ClearWorker => _clearWorker ?? (_clearWorker = new Command(obj =>
         {
             db.Workers.RemoveRange(db.Workers);
             db.SaveChanges();
             LoadWorker();
         }));
-        public Command ClearDefaulter => _clearDefaulter ?? (_clearDefaulter = new Command(obj=> 
+        public Command ClearDefaulter => _clearDefaulter ?? (_clearDefaulter = new Command(obj =>
         {
             db.Defaulters.RemoveRange(db.Defaulters);
             db.SaveChanges();
             LoadDefaulters();
         }));
 
-        public Command Search => _search ?? (_search = new Command(obj=> 
+        public Command Search => _search ?? (_search = new Command(obj =>
         {
-            string item = obj.ToString();            
+            string item = obj.ToString();
             LoadDefaulters();
             if (!string.IsNullOrWhiteSpace(item))
             {
                 Defaulters = Defaulters.Where(x => x.Search.ToUpper().Contains(item.ToUpper()));
-                CountItem = Defaulters?.Count() ?? 0;                
+                CountItem = Defaulters?.Count() ?? 0;
             }
             if (!string.IsNullOrWhiteSpace(FirstComboSelect))
             {
@@ -471,7 +507,7 @@ namespace DefaulterList.ViewModels
             }
         }));
 
-        public Command TaskView => _taskView ?? (_taskView = new Command(obj=> 
+        public Command TaskView => _taskView ?? (_taskView = new Command(obj =>
         {
             IsVisibility["Grid"] = Visibility.Visible;
             IsVisibility["RightPanelGrid"] = Visibility.Visible;
@@ -479,7 +515,7 @@ namespace DefaulterList.ViewModels
             IsVisibility["RightPanel"] = Visibility.Collapsed;
             OnPropertyChanged(nameof(IsVisibility));
         }));
-        public Command TeamView => _teamView ?? (_teamView = new Command(obj=> 
+        public Command TeamView => _teamView ?? (_teamView = new Command(obj =>
         {
             IsVisibility["Grid"] = Visibility.Collapsed;
             IsVisibility["RightPanelGrid"] = Visibility.Collapsed;
@@ -488,7 +524,7 @@ namespace DefaulterList.ViewModels
             OnPropertyChanged(nameof(IsVisibility));
         }));
 
-        public Command AddTeamForGrid => _addTeamForGrid ?? (_addTeamForGrid = new Command(obj=> 
+        public Command AddTeamForGrid => _addTeamForGrid ?? (_addTeamForGrid = new Command(obj =>
         {
             if (TeamSelect != null)
             {
@@ -500,13 +536,13 @@ namespace DefaulterList.ViewModels
                     db.Entry(item).State = EntityState.Modified;
                 }
                 db.SaveChanges();
-                Search.Execute(SearchText);                
-                
+                Search.Execute(SearchText);
+
             }
         }));
-        public Command DelTeamForGrid => _delTeamForGrid ?? (_delTeamForGrid = new Command(obj=> 
+        public Command DelTeamForGrid => _delTeamForGrid ?? (_delTeamForGrid = new Command(obj =>
         {
-            
+
             foreach (var item in DefaultersSelect)
             {
                 if (IsResultNull(item))
@@ -518,23 +554,23 @@ namespace DefaulterList.ViewModels
                 }
             }
             db.SaveChanges();
-            Search.Execute(SearchText);           
-           
+            Search.Execute(SearchText);
+
 
         }));
-        public Command FilterTeamForGrid => _filterTeamForGrid ?? (_filterTeamForGrid = new Command(obj=> 
+        public Command FilterTeamForGrid => _filterTeamForGrid ?? (_filterTeamForGrid = new Command(obj =>
         {
             LoadDefaulters();
             Defaulters = Defaulters.Where(x => x.DateResult == DateResult &&
-                                                  x.NameTeam == TeamSelect.NameTeam)
-                                      .OrderBy(x => x.TotalList.Address);
+                                               x.NameTeam == TeamSelect.NameTeam)
+                                   .OrderBy(x => x.TotalList.Address);
             CountItem = Defaulters?.Count() ?? 0;
         }));
-        public Command AddResult => _addResult ?? (_addResult = new Command(obj=> 
+        public Command AddResult => _addResult ?? (_addResult = new Command(obj =>
         {
             var item = DefaultersSelect.FirstOrDefault();
             if (item.NameTeam != "")
-            {                
+            {
                 Info = item.FullNameItem;
                 IsDisabled = item.IsDisabled;
                 Description = item.DescriptionResult;
@@ -544,14 +580,26 @@ namespace DefaulterList.ViewModels
                 OnPropertyChanged(nameof(IsVisibility));
             }
         }));
-        public Command SaveResult => _saveResult ?? (_saveResult = new Command(obj=>
-        {            
+        public Command SaveResult => _saveResult ?? (_saveResult = new Command(obj =>
+        {
             var item = DefaultersSelect.FirstOrDefault();
+
             item.IsDisabled = IsDisabled;
             item.DescriptionResult = Description;
+
+            if (CostTOV != 0m)
+            {
+                PayTOV = decimal.Round(item.DebtTOV - CostTOV, 2);
+            }
+            if (CostRZP != 0m)
+            {
+                PayRZP = decimal.Round(item.DebtRZP - CostRZP, 2);
+            }
+
             item.PaymentTOVResult = PayTOV;
             item.PaymentRZPResult = PayRZP;
             item.Color = "White";
+
             if (PayTOV >= item.DebtTOV)
             {
                 item.Color = "Green";
@@ -564,22 +612,29 @@ namespace DefaulterList.ViewModels
             {
                 item.Color = "Red";
             }
-            
+
             db.Entry(item).State = EntityState.Modified;
             db.SaveChanges();
-            
+
             IsVisibility["Footer"] = Visibility.Collapsed;
             OnPropertyChanged(nameof(IsVisibility));
             TeamSelect = Teams.FirstOrDefault(x => x.NameTeam == teamSaveValue);
-            FilterTeamForGrid.Execute("");
-            
+            if (TeamSelect != null)
+            {
+                FilterTeamForGrid.Execute("");
+            }
+            else
+            {
+                LoadDefaulters();
+            }
+
         }));
 
-        public Command PrintGrid => _printGrid ?? (_printGrid = new Command(async obj=> 
+        public Command PrintGrid => _printGrid ?? (_printGrid = new Command(async obj =>
         {
             StartProgressBar();
-            await Task.Run(()=> 
-            {            
+            await Task.Run(() =>
+            {
                 if (Defaulters.Count() > 0)
                 {
                     PrintService service = new PrintService();
@@ -589,7 +644,7 @@ namespace DefaulterList.ViewModels
             });
             StopProgressBar();
         }));
-        public Command PrintReportToday => _printReportToday ?? (_printReportToday = new Command(async obj=> 
+        public Command PrintReportToday => _printReportToday ?? (_printReportToday = new Command(async obj =>
         {
             LoadDefaulters();
             StartProgressBar();
@@ -604,7 +659,7 @@ namespace DefaulterList.ViewModels
             });
             StopProgressBar();
         }));
-        public Command PrintReportTelegram => _printReportTelegram ?? (_printReportTelegram = new Command(async obj=> 
+        public Command PrintReportTelegram => _printReportTelegram ?? (_printReportTelegram = new Command(async obj =>
         {
             LoadDefaulters();
             StartProgressBar();
@@ -620,8 +675,7 @@ namespace DefaulterList.ViewModels
             StopProgressBar();
         }));
 
-
-
+        
 
         public MainViewModel()
         {
@@ -632,13 +686,13 @@ namespace DefaulterList.ViewModels
             DateResult = DateTime.Today;
             SearchText = "";
             IsCheckedFinish = true;
-            
+
         }
 
         private void InitializedDB()
-        {            
+        {
             db = new ContextDefaulter();
-            db.Defaulters.Include(x => x.TotalList).Load();                     
+            db.Defaulters.Include(x => x.TotalList).Load();
             LoadWorker();
             LoadTeam();
             LoadTotalList();
@@ -647,7 +701,7 @@ namespace DefaulterList.ViewModels
         private void LoadWorker()
         {
             db.Workers.Load();
-            Workers = db.Workers.Local.ToBindingList().OrderBy(x=>x.Name);
+            Workers = db.Workers.Local.ToBindingList().OrderBy(x => x.Name);
         }
         private void LoadTeam()
         {
@@ -672,21 +726,21 @@ namespace DefaulterList.ViewModels
             }
         }
         private void LoadDefaulters()
-        {            
-            dateLoad = db.Dictionaries.FirstOrDefault(x=>x.NameKey == "DateLoad")?.ValueKeyDate ?? DateTime.MinValue;
-            Defaulters = db.Defaulters.Local.ToBindingList().Where(x=>x.Date == dateLoad).OrderBy(x=>x.TotalList.Address);
+        {
+            dateLoad = db.Dictionaries.FirstOrDefault(x => x.NameKey == "DateLoad")?.ValueKeyDate ?? DateTime.MinValue;
+            Defaulters = db.Defaulters.Local.ToBindingList().Where(x => x.Date == dateLoad).OrderBy(x => x.TotalList.Address);
             CountItem = Defaulters?.Count() ?? 0;
         }
-       
+
         private void LoadComboBox()
         {
-            TextComboBox = new List<string>() 
+            TextComboBox = new List<string>()
             {
                 "",
                 ">",
                 "<",
                 "=="
-            };           
+            };
         }
         private void StartProgressBar()
         {
@@ -737,10 +791,10 @@ namespace DefaulterList.ViewModels
                 };
                 db.Dictionaries.Add(dic);
             }
-            db.SaveChanges();            
+            db.SaveChanges();
 
         }
-        private  bool Operator(string logic, decimal x, decimal y)
+        private bool Operator(string logic, decimal x, decimal y)
         {
             switch (logic)
             {

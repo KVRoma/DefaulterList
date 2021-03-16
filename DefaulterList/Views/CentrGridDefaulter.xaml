@@ -36,13 +36,14 @@
                 <DataGridTextColumn Header="Адреса" Width="*" Binding="{Binding Path=TotalList.Address}"/>
                 <DataGridTextColumn Header="П.І.Б." Width="auto" Binding="{Binding Path=TotalList.Name}"/>
                 <DataGridTextColumn Header="Дата" Width="0.2*"  Binding="{Binding Path=Date, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                <DataGridTextColumn Header="ТОВ" Width="0.4*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
-                <DataGridTextColumn Header="РЗП" Width="0.4*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="ТОВ" Width="0.2*" Binding="{Binding Path=DebtTOV, StringFormat='0.00 грн.'}"/>
+                <DataGridTextColumn Header="РЗП" Width="0.2*" Binding="{Binding Path=DebtRZP, StringFormat='0.00 грн.'}"/>
                 <DataGridTemplateColumn MinWidth="1" Width="2" MaxWidth="2" CellStyle="{StaticResource DataGridColumnSeparator}"/>
                 <DataGridTextColumn Header="Виконавець" Width="auto" Binding="{Binding Path=NameTeam}"/>
                 <DataGridTextColumn Header="Дата" Width="0.2*"  Binding="{Binding Path=DateResult, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                <DataGridTextColumn Header="Оп ТОВ" Width="0.3*" Binding="{Binding Path=PaymentTOVResult}"/>
-                <DataGridTextColumn Header="Оп РЗП" Width="0.3*" Binding="{Binding Path=PaymentRZPResult}"/>
+                <DataGridTextColumn Header="Оп ТОВ" Width="0.2*" Binding="{Binding Path=PaymentTOVResult}"/>
+                <DataGridTextColumn Header="Оп РЗП" Width="0.2*" Binding="{Binding Path=PaymentRZPResult}"/>
+                <DataGridTextColumn Header="Коментар" Width="0.5*" Binding="{Binding Path=DescriptionResult}"/>
                 <DataGridCheckBoxColumn Header="Відк." Width="auto" Binding="{Binding Path=IsDisabled}"/>                
             </DataGrid.Columns>
         </DataGrid>

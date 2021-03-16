@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DefaulterList.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="80" d:DesignWidth="850">
+             xmlns:UI="clr-namespace:DefaulterList.Commands"
+             d:DesignHeight="210" d:DesignWidth="900">
     <StackPanel Orientation="Vertical" Margin="5,20,5,20">
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Center">
             <Label Content="{Binding Info}"
                    Foreground="Blue"
-                   FontSize="10"
+                   FontSize="15"
                    FontWeight="Bold" 
                    FontStyle="Italic"
                    Margin="5"/>            
@@ -20,31 +21,69 @@
                     HorizontalAlignment="Center">
             
             <CheckBox Content="Відключення" 
+                      FontWeight="Bold"
                       HorizontalContentAlignment="Center" 
                       VerticalContentAlignment="Center"
                       IsChecked="{Binding IsDisabled}" 
-                      Margin="5"/>
-            <Label Content="Оплата ТОВ - " 
+                      Margin="0,5,30,5"/>
+            
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Оплата ТОВ -    " 
+                           FontSize="12"
+                           FontWeight="Bold"
+                           Margin="5"/>
+                    <TextBox Text="{Binding PayTOV}" 
+                             Width="80"
+                             Margin="5" 
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Залишок ТОВ - " 
+                           FontSize="12"
+                           FontWeight="Bold"
+                           Margin="5"/>
+                    <TextBox Text="{Binding CostTOV}" 
+                             Width="80"
+                             Margin="5"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Оплата РЗП -    " 
+                           FontSize="12"
+                           FontWeight="Bold"
+                           Margin="5"/>
+                    <TextBox Text="{Binding PayRZP}" 
+                             Width="80"
+                             Margin="5"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Залишок РЗП - " 
+                           FontSize="12"
+                           FontWeight="Bold"
+                           Margin="5"/>
+                    <TextBox Text="{Binding CostRZP}" 
+                             Width="80"
+                             Margin="5"
+                             UI:FocusAdvancement.AdvancesByEnterKey="True"/>
+                </StackPanel>
+            </StackPanel>
+            <Label Content="Коментар - " 
+                   VerticalContentAlignment="Center"
                    FontSize="12"
-                   Margin="5"/>
-            <TextBox Text="{Binding PayTOV}" 
-                     Width="80"
-                     Margin="5"/>
-            <Label Content="Оплата РЗП - " 
-                   FontSize="12"
-                   Margin="5"/>
-            <TextBox Text="{Binding PayRZP}" 
-                     Width="80"
-                     Margin="5"/>
-            <Label Content="Коментар - "  
-                   FontSize="12"
+                   FontWeight="Bold"
                    Margin="5"/>
             <TextBox Text="{Binding Description}" 
                      Width="200"
-                     Margin="5"/>
+                     Margin="5"
+                     UI:FocusAdvancement.AdvancesByEnterKey="True"/>
             <Button Content="Save"
                     Margin="5" 
-                    Width="50"
+                    Width="100"
                     Foreground="Green" 
                     FontWeight="Bold"
                     Command="{Binding SaveResult}"/>

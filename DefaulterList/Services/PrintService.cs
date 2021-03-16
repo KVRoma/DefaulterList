@@ -110,10 +110,10 @@ namespace DefaulterList.Services
 
                 ExcelApp.Cells[4, 1] = date.ToShortDateString();
 
-                ExcelApp.Cells[4, 2] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date && x.PaymentRZPResult > 0m)?.Count() ?? 0;
-                ExcelApp.Cells[4, 3] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date)?.Select(x => x.PaymentRZPResult)?.Sum() ?? 0m;
-                ExcelApp.Cells[4, 4] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date && x.PaymentTOVResult > 0m)?.Count() ?? 0;
-                ExcelApp.Cells[4, 5] = Defaulters?.Where(x => x.Color == "Green" || x.Color == "Yellow" && x.DateResult == date)?.Select(x => x.PaymentTOVResult)?.Sum() ?? 0m;
+                ExcelApp.Cells[4, 2] = Defaulters?.Where(x => (x.Color == "Green" || x.Color == "Yellow") && x.DateResult == date && x.PaymentRZPResult > 1m)?.Count() ?? 0;
+                ExcelApp.Cells[4, 3] = Defaulters?.Where(x => (x.Color == "Green" || x.Color == "Yellow") && x.DateResult == date)?.Select(x => x.PaymentRZPResult)?.Sum() ?? 0m;
+                ExcelApp.Cells[4, 4] = Defaulters?.Where(x => (x.Color == "Green" || x.Color == "Yellow") && x.DateResult == date && x.PaymentTOVResult > 1m)?.Count() ?? 0;
+                ExcelApp.Cells[4, 5] = Defaulters?.Where(x => (x.Color == "Green" || x.Color == "Yellow") && x.DateResult == date)?.Select(x => x.PaymentTOVResult)?.Sum() ?? 0m;
                                 
                 ExcelApp.Cells[4, 6] = Defaulters?.Where(x => x.Color == "Red" && x.DateResult == date)?.Count() ?? 0;                
                 ExcelApp.Cells[4, 7] = Defaulters?.Where(x => x.Color == "Red" && x.DateResult == date)?.Select(x => x.DebtRZP)?.Sum() ?? 0m;
