@@ -351,6 +351,8 @@ namespace DefaulterList.ViewModels
         private Command _printGrid;
         private Command _printReportToday;
         private Command _printReportTelegram;
+        private Command _printReportTodayMonth;
+        private Command _printReportTelegramMonth;
         //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj =>
         {
@@ -524,39 +526,44 @@ namespace DefaulterList.ViewModels
             OnPropertyChanged(nameof(IsVisibility));
         }));
 
-        public Command AddTeamForGrid => _addTeamForGrid ?? (_addTeamForGrid = new Command(obj =>
+        public Command AddTeamForGrid => _addTeamForGrid ?? (_addTeamForGrid = new Command(async obj =>
         {
             if (TeamSelect != null)
             {
-                foreach (var item in DefaultersSelect)
+                StartProgressBar();
+                await Task.Run(() =>
                 {
-                    item.DateResult = DateResult;
-                    item.NameTeam = TeamSelect.NameTeam;
-                    item.Descriptions = TeamSelect.Descriptions;
-                    db.Entry(item).State = EntityState.Modified;
-                }
-                db.SaveChanges();
+                    foreach (var item in DefaultersSelect)
+                    {
+                        item.DateResult = DateResult;
+                        item.NameTeam = TeamSelect.NameTeam;
+                        item.Descriptions = TeamSelect.Descriptions;
+                        db.Entry(item).State = EntityState.Modified;
+                    }
+                    db.SaveChanges();
+                });
+                StopProgressBar();
                 Search.Execute(SearchText);
-
             }
         }));
-        public Command DelTeamForGrid => _delTeamForGrid ?? (_delTeamForGrid = new Command(obj =>
+        public Command DelTeamForGrid => _delTeamForGrid ?? (_delTeamForGrid = new Command(async obj =>
         {
-
-            foreach (var item in DefaultersSelect)
-            {
-                if (IsResultNull(item))
+            StartProgressBar();
+            await Task.Run(() => {
+                foreach (var item in DefaultersSelect)
                 {
-                    item.DateResult = null;
-                    item.NameTeam = "";
-                    item.Descriptions = "";
-                    db.Entry(item).State = EntityState.Modified;
+                    if (IsResultNull(item))
+                    {
+                        item.DateResult = null;
+                        item.NameTeam = "";
+                        item.Descriptions = "";
+                        db.Entry(item).State = EntityState.Modified;
+                    }
                 }
-            }
-            db.SaveChanges();
+                db.SaveChanges();
+            });
+            StopProgressBar();
             Search.Execute(SearchText);
-
-
         }));
         public Command FilterTeamForGrid => _filterTeamForGrid ?? (_filterTeamForGrid = new Command(obj =>
         {
@@ -674,8 +681,38 @@ namespace DefaulterList.ViewModels
             });
             StopProgressBar();
         }));
+        public Command PrintReportTodayMonth => _printReportTodayMonth ?? (_printReportTodayMonth = new Command(async obj =>
+        {
+            LoadDefaulters();
+            StartProgressBar();
+            await Task.Run(() =>
+            {
+                if (Defaulters.Count() > 0)
+                {
+                    PrintService service = new PrintService();
+                    service.Defaulters = Defaulters;
+                    service.PrintReportToday("\\Blanks\\ReportToday",null);
+                }
+            });
+            StopProgressBar();
+        }));
+        public Command PrintReportTelegramMonth => _printReportTelegramMonth ?? (_printReportTelegramMonth = new Command(async obj=>
+        {
+            LoadDefaulters();
+            StartProgressBar();
+            await Task.Run(() =>
+            {
+                if (Defaulters.Count() > 0)
+                {
+                    PrintService service = new PrintService();
+                    service.Defaulters = Defaulters;
+                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", null);
+                }
+            });
+            StopProgressBar();
+        }));
 
-        
+
 
         public MainViewModel()
         {
@@ -811,6 +848,11 @@ namespace DefaulterList.ViewModels
                 return true;
             }
             return false;
+        }
+        private void LoadPay(List<Defaulter> payList)
+        {
+            
+
         }
         /// <summary>
         /// Метод закриває программу
