@@ -80,7 +80,7 @@ namespace DefaulterList.Services
             }
             
         }
-        public void PrintReportToday(string path, DateTime? _date)
+        public void PrintReportToday(string path, DateTime _date, bool isDay)
         {
             Excel.Application ExcelApp = new Excel.Application();
             Excel.Workbook ExcelWorkBook;
@@ -89,20 +89,25 @@ namespace DefaulterList.Services
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону                               
                 
                 IEnumerable<Defaulter> temps;
-                DateTime date = (DateTime)((_date != null) ? (_date) : (DateTime.MinValue));
-                if (date == DateTime.MinValue)
-                {                    
-                    temps = Defaulters.ToList();
-                    ExcelApp.Cells[3, 7] = temps.FirstOrDefault().Date.Month.ToString() + "  " +"місяць";
+
+                int day = Defaulters.Where(x => x.Date.Month == _date.Month && x.Date.Year == _date.Year)?.Select(x => x.Date.Day).Min() ?? 0;
+                result["ReestrCount"] = Defaulters.Where(x => x.Date.Day == day && x.Date.Month == _date.Month && x.Date.Year == _date.Year)?.Count() ?? 0m;
+                result["ReestrTOV"] = Defaulters.Where(x => x.Date.Day == day && x.Date.Month == _date.Month && x.Date.Year == _date.Year)?.Select(x=>x.DebtTOV)?.Sum() ?? 0m;
+                result["ReestrRZP"] = Defaulters.Where(x => x.Date.Day == day && x.Date.Month == _date.Month && x.Date.Year == _date.Year)?.Select(x => x.DebtRZP)?.Sum() ?? 0m;
+
+                if (isDay)
+                {
+                    temps = Defaulters.Where(x => x.DateResult == _date);
+                    ExcelApp.Cells[3, 7] = _date.ToShortDateString();
                 }
                 else
-                {
-                    ExcelApp.Cells[3, 7] = date.ToShortDateString();
-                    temps = Defaulters.Where(x => x.DateResult == date);
+                {                   
+                    temps = Defaulters.Where(x => x.Date.Month == _date.Month && x.Date.Year == _date.Year).ToList();
+                    ExcelApp.Cells[3, 7] = temps.FirstOrDefault().Date.Month.ToString() + "  " + "місяць";
                 }                
                 
                 foreach (var item in temps)
-                {
+                {                    
                     if (item.IsDisabled)
                     {
                         result["VidklCount"]++;
@@ -142,9 +147,9 @@ namespace DefaulterList.Services
                 }
 
 
-                ExcelApp.Cells[8, 1] = Defaulters?.Count() ?? 0;
-                ExcelApp.Cells[8, 2] = Defaulters?.Select(x => x.DebtTOV)?.Sum() ?? 0m;
-                ExcelApp.Cells[8, 3] = Defaulters?.Select(x => x.DebtRZP)?.Sum() ?? 0m;
+                ExcelApp.Cells[8, 1] = decimal.Round(result["ReestrCount"], 0);
+                ExcelApp.Cells[8, 2] = decimal.Round(result["ReestrTOV"], 2);
+                ExcelApp.Cells[8, 3] = decimal.Round(result["ReestrRZP"], 2);
 
                 ExcelApp.Cells[8, 4] = decimal.Round(result["VidklCount"], 0);
                 ExcelApp.Cells[8, 5] = decimal.Round(result["VidklTOV"], 2);
@@ -174,7 +179,7 @@ namespace DefaulterList.Services
                 ExcelApp.UserControl = true;       // Передаємо керування користувачу  
             }
         }
-        public void PrintReportTelegram(string path, DateTime? _date)
+        public void PrintReportTelegram(string path, DateTime _date, bool isDay)
         {
             Excel.Application ExcelApp = new Excel.Application();
             Excel.Workbook ExcelWorkBook;
@@ -183,16 +188,17 @@ namespace DefaulterList.Services
                 ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону  
                 
                 IEnumerable<Defaulter> temps;
-                DateTime date = (DateTime)((_date != null) ? (_date) : (DateTime.MinValue));
-                if (date == DateTime.MinValue)
+                //DateTime date = (DateTime)((_date != null) ? (_date) : (DateTime.MinValue));
+                if (isDay)
                 {
-                    temps = Defaulters.ToList();
-                    ExcelApp.Cells[4, 1] = temps.FirstOrDefault().Date.Month.ToString() + "  " +"місяць";
+                    ExcelApp.Cells[4, 1] = _date.ToShortDateString();
+                    temps = Defaulters.Where(x => x.DateResult == _date);
+                    
                 }
                 else
                 {
-                    ExcelApp.Cells[4, 1] = date.ToShortDateString();
-                    temps = Defaulters.Where(x => x.DateResult == date);
+                    temps = Defaulters.Where(x => x.Date.Month == _date.Month && x.Date.Year == _date.Year).ToList();
+                    ExcelApp.Cells[4, 1] = temps.FirstOrDefault().Date.Month.ToString() + "  " + "місяць";
                 }
                 
 
@@ -245,6 +251,72 @@ namespace DefaulterList.Services
                 ExcelApp.Cells[4, 6] = decimal.Round(result["VidklCount"], 0);
                 ExcelApp.Cells[4, 7] = decimal.Round(result["VidklRZP"], 2);
                 ExcelApp.Cells[4, 8] = decimal.Round(result["VidklTOV"], 2);                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error message: " + Environment.NewLine +
+                                        ex.Message + Environment.NewLine + Environment.NewLine +
+                                        "StackTrace message: " + Environment.NewLine +
+                                        ex.StackTrace, "Warning !!!");
+            }
+            finally
+            {
+                ExcelApp.Visible = true;           // Робим книгу видимою
+                ExcelApp.UserControl = true;       // Передаємо керування користувачу  
+            }
+        }
+        public void PrintStatistics(string path, DateTime _date)
+        {
+            Excel.Application ExcelApp = new Excel.Application();
+            Excel.Workbook ExcelWorkBook;
+            try
+            {
+                ExcelWorkBook = ExcelApp.Workbooks.Open(Environment.CurrentDirectory + path);   //Вказуємо шлях до шаблону  
+
+                IEnumerable<Defaulter> temps;
+
+                temps = Defaulters.Where(q => q.Date.Month == _date.Month && q.Date.Year == _date.Year && q.NameTeam != "").ToList();
+
+                var teams = temps.OrderBy(q=>q.NameTeam).Select(q => q.NameTeam).Distinct();
+                var dates = temps.OrderBy(q => q.DateResult).Select(q => q.DateResult).Distinct();
+                int x = 0;
+                int y = 0;
+                int row = 0;
+
+                foreach (var date in dates)
+                {
+                    if (date != null)
+                    {
+                        ExcelApp.Cells[6 + row, 1] = date;
+                        row++;
+                    }
+                }
+
+                foreach (var item in teams)
+                {
+                    if (!string.IsNullOrWhiteSpace(item))
+                    {
+                        ExcelApp.Cells[3, 2 + y] = temps.Where(q => q.NameTeam == item).FirstOrDefault().NameTeam;
+                        ExcelApp.Cells[4, 2 + y] = temps.Where(q => q.NameTeam == item).FirstOrDefault().Descriptions;
+                        ExcelApp.Cells[5, 2 + y] = "Повна Опл.";
+                        ExcelApp.Cells[5, 3 + y] = "Часткова Опл.";
+                        ExcelApp.Cells[5, 4 + y] = "Відключено";
+                        x = 0;
+
+                        foreach (var date in dates)
+                        {
+                            if (date != null)
+                            {
+                                ExcelApp.Cells[6 + x, 2 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Green")?.Count() ?? 0;
+                                ExcelApp.Cells[6 + x, 3 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Yellow")?.Count() ?? 0;
+                                ExcelApp.Cells[6 + x, 4 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Red")?.Count() ?? 0;
+                                x += 1;
+                            }
+                        }
+                        y += 3;
+                    }
+                }
+               
             }
             catch (Exception ex)
             {

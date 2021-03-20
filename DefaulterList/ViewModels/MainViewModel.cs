@@ -353,6 +353,7 @@ namespace DefaulterList.ViewModels
         private Command _printReportTelegram;
         private Command _printReportTodayMonth;
         private Command _printReportTelegramMonth;
+        private Command _printStatisticsMonth;
         //****************************************************************************
         public Command GetTotalList => _getTotalList ?? (_getTotalList = new Command(async obj =>
         {
@@ -660,8 +661,8 @@ namespace DefaulterList.ViewModels
                 if (Defaulters.Count() > 0)
                 {
                     PrintService service = new PrintService();
-                    service.Defaulters = Defaulters;
-                    service.PrintReportToday("\\Blanks\\ReportToday", DateResult);
+                    service.Defaulters = db.Defaulters;
+                    service.PrintReportToday("\\Blanks\\ReportToday", DateResult, true);
                 }
             });
             StopProgressBar();
@@ -675,8 +676,8 @@ namespace DefaulterList.ViewModels
                 if (Defaulters.Count() > 0)
                 {
                     PrintService service = new PrintService();
-                    service.Defaulters = Defaulters;
-                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", DateResult);
+                    service.Defaulters = db.Defaulters;
+                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", DateResult, true);
                 }
             });
             StopProgressBar();
@@ -690,8 +691,8 @@ namespace DefaulterList.ViewModels
                 if (Defaulters.Count() > 0)
                 {
                     PrintService service = new PrintService();
-                    service.Defaulters = Defaulters;
-                    service.PrintReportToday("\\Blanks\\ReportToday",null);
+                    service.Defaulters = db.Defaulters;
+                    service.PrintReportToday("\\Blanks\\ReportToday",DateResult, false);
                 }
             });
             StopProgressBar();
@@ -705,13 +706,23 @@ namespace DefaulterList.ViewModels
                 if (Defaulters.Count() > 0)
                 {
                     PrintService service = new PrintService();
-                    service.Defaulters = Defaulters;
-                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", null);
+                    service.Defaulters = db.Defaulters;
+                    service.PrintReportTelegram("\\Blanks\\ReportTelegram", DateResult, false);
                 }
             });
             StopProgressBar();
         }));
-
+        public Command PrintStatisticsMonth => _printStatisticsMonth ?? (_printStatisticsMonth = new Command(async obj=> 
+        {
+            StartProgressBar();
+            await Task.Run(()=> 
+            {
+                PrintService service = new PrintService();
+                service.Defaulters = db.Defaulters;
+                service.PrintStatistics("\\Blanks\\ReportStatisticsTeam", DateResult);
+            });
+            StopProgressBar();
+        }));
 
 
         public MainViewModel()
@@ -848,12 +859,7 @@ namespace DefaulterList.ViewModels
                 return true;
             }
             return false;
-        }
-        private void LoadPay(List<Defaulter> payList)
-        {
-            
-
-        }
+        }        
         /// <summary>
         /// Метод закриває программу
         /// </summary>        

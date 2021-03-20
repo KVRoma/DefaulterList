@@ -28,6 +28,7 @@
                 <Separator Margin="5"/>
                 <MenuItem Header="Звіт про роботу за місяць" Command="{Binding PrintReportTodayMonth}"/>
                 <MenuItem Header="Звіт в Telegram за місяць" Command="{Binding PrintReportTelegramMonth}"/>
+                <MenuItem Header="Статистика роботи бригад" Command="{Binding PrintStatisticsMonth}"/>
             </MenuItem>
             <Separator Margin="10,0,0,0"/>
             <MenuItem Header="Очистити" Foreground="Red" Visibility="{Binding IsVisibility[MenuClear]}">
