@@ -307,9 +307,9 @@ namespace DefaulterList.Services
                         {
                             if (date != null)
                             {
-                                ExcelApp.Cells[6 + x, 2 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Green")?.Count() ?? 0;
-                                ExcelApp.Cells[6 + x, 3 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Yellow")?.Count() ?? 0;
-                                ExcelApp.Cells[6 + x, 4 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Red")?.Count() ?? 0;
+                                ExcelApp.Cells[6 + x, 2 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Green")?.Count().ToString() ?? "";
+                                ExcelApp.Cells[6 + x, 3 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Yellow")?.Count().ToString() ?? "";
+                                ExcelApp.Cells[6 + x, 4 + y] = temps.Where(q => q.NameTeam == item && q.DateResult == date && q.Color == "Red")?.Count().ToString() ?? "";
                                 x += 1;
                             }
                         }
